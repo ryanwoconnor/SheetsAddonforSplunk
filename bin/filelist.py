@@ -112,37 +112,28 @@ logger = setup_logger(logging.INFO)
 results,dummy,settings = splunk.Intersplunk.getOrganizedResults()
 sessionKey = settings.get("sessionKey")
 
-#Connect to Splunk
-try:
-    #Second GET Method
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
-except Exception as e:
-    logger.info(str(e))
-credentials = GetTokens(sessionKey)
-
 for result in results:
-	for credential in credentials:
-		try:
-			#Get Google Drive Name and API Creds from Password Store
-			username=credential.content.get('username')
-			password=credential.content.get('clear_password')
+	try:
+		#Get Google Drive Name and API Creds from Password Store
+		username=result['username']
+		password=result['clear_password']
 
-			#Parse JSON API Creds
-			tokens = json.loads(password)
+		#Parse JSON API Creds
+		tokens = json.loads(password)
+	
+		#Get Refresh Token
+		refreshtoken = tokens["RefreshToken"]
+
+		#Get the API Key and Refresh Token
+		new_creds = RefreshToken(refreshtoken, username, sessionKey)
 		
-			#Get Refresh Token
-			refreshtoken = tokens["RefreshToken"]
-
-			#Get the API Key and Refresh Token
-			new_creds = RefreshToken(refreshtoken, username, sessionKey)
-			
-			#Get New API Key	
-			new_creds = json.loads(new_creds)
-			api_key=new_creds["APIKey"]
+		#Get New API Key	
+		new_creds = json.loads(new_creds)
+		api_key=new_creds["APIKey"]
 
         	
-		except Exception as e:
-			logger.info(str(e))
+	except Exception as e:
+		logger.info(str(e))
 
 #r=requests.get('https://www.googleapis.com/drive/v3/files?access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27+or+name+contains+%27ryan_satoshi_test%27')
 #r=requests.get('https://www.googleapis.com/drive/v3/files?access_token='+api_key)
