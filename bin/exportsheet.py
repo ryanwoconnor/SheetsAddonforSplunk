@@ -14,6 +14,7 @@ import sys
 import splunk.rest
 import datetime
 import re
+import csv
 import logging
 import logging.handlers
 import sys
@@ -71,10 +72,8 @@ def GetTokens(sesssionKey):
 
 def GetFiles(api_key, page_token, results, logger):
 	try:
-		#r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27+or+name+contains+%27ryan_satoshi_test%27')
+		r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27')
 		#r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key)
-		r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&pageToken'+page_token+'&access_token='+api_key+'&q=mimeType+%3d+%27application/vnd.google-apps.spreadsheet%27')
-
 		r = json.loads(r.text)
 
 		for file in r["files"]:
@@ -103,6 +102,48 @@ def GetFiles(api_key, page_token, results, logger):
 	except Exception as e:
 		logger.info(str(e))
 		return results
+		
+def GetSheet(api_key, id, logger):
+	try:
+		results = []
+		r=requests.get('https://www.googleapis.com/drive/v3/files/'+id+'/export?access_token='+api_key+'&mimeType=text/csv')
+		reader = csv.reader(r.text.splitlines())
+		
+		i_row=0
+		keys=[]
+		for row in reader:
+			if i_row==0:
+				i_header=0
+				for header in row:
+					key = {}
+					key[i_header]=header
+					keys.append(key)
+					i_header = i_header + 1
+				i_row=i_row+1
+				break
+		i_row=0
+
+		result = {}
+		for row in reader:
+			if i_row==0:
+				i_row=i_row+1
+				continue
+			i_row_value = 0
+			result = {}
+			for item in row:
+				result[keys[i_row_value][i_row_value]]=item
+				i_row_value = i_row_value + 1
+			results.append(result)
+			i_row=i_row+1		
+		return results
+   		
+	except Exception as e:
+		results = []
+		result["ERROR"] = str(e)
+		results.append(result)
+		logger.info(str(e))
+		return results
+
 
 now = datetime.datetime.now()
 
@@ -112,65 +153,32 @@ logger = setup_logger(logging.INFO)
 results,dummy,settings = splunk.Intersplunk.getOrganizedResults()
 sessionKey = settings.get("sessionKey")
 
-#Connect to Splunk
-try:
-    #Second GET Method
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
-except Exception as e:
-    logger.info(str(e))
-credentials = GetTokens(sessionKey)
 
 for result in results:
-	for credential in credentials:
-		try:
-			#Get Google Drive Name and API Creds from Password Store
-			username=credential.content.get('username')
-			password=credential.content.get('clear_password')
+	try:
+		#Get Google Drive Name and API Creds from Password Store
+		username=result['username']
+		password=result['clear_password']
 
-			#Parse JSON API Creds
-			tokens = json.loads(password)
+		fileId = result['fileId']
+		#Parse JSON API Creds
+		tokens = json.loads(password)
+	
+		#Get Refresh Token
+		refreshtoken = tokens["RefreshToken"]
+
+		#Get the API Key and Refresh Token
+		new_creds = RefreshToken(refreshtoken, username, sessionKey)
 		
-			#Get Refresh Token
-			refreshtoken = tokens["RefreshToken"]
+		#Get New API Key	
+		new_creds = json.loads(new_creds)
+		api_key=new_creds["APIKey"]
 
-			#Get the API Key and Refresh Token
-			new_creds = RefreshToken(refreshtoken, username, sessionKey)
-			
-			#Get New API Key	
-			new_creds = json.loads(new_creds)
-			api_key=new_creds["APIKey"]
-
-        	
-		except Exception as e:
-			logger.info(str(e))
-
-#r=requests.get('https://www.googleapis.com/drive/v3/files?access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27+or+name+contains+%27ryan_satoshi_test%27')
-#r=requests.get('https://www.googleapis.com/drive/v3/files?access_token='+api_key)
-r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&access_token='+api_key+'&q=mimeType+%3d+%27application/vnd.google-apps.spreadsheet%27')
-
-r = json.loads(r.text)
-
-results = []
-for file in r["files"]:
-	result={}
-	if "name" in file:
-		result["name"] = file["name"]
-	else:
-		result["name"] = "(None)"
 		
-	if "id" in file:
-		result["id"] = file["id"]
-	else:
-		result["id"] = "(None)"
-		
-	if "mimeType" in file:
-		result["mimeType"] = file["mimeType"]
-	else:
-		result["mimeType"] = "(None)"
-	results.append(result)
-
-if 'nextPageToken' in r:
-	page_token=r["nextPageToken"]
-	results = GetFiles(api_key, page_token, results, logger)
-
-splunk.Intersplunk.outputResults(results)
+	except Exception as e:
+		logger.info(str(e))
+try:
+	new = GetSheet(api_key, fileId, logger)
+except Exception as e:
+	logger.info(str(e))
+splunk.Intersplunk.outputResults(new)

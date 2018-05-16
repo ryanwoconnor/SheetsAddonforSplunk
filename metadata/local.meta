@@ -1,19 +1,13 @@
-[app/ui]
+[views/lookup_sheet]
+version = 7.0.2
+modtime = 1526440198.075769000
+
+[passwords/credential%3ARyan%20Personal%3ARyan%20Personal%3A]
 owner = admin
 version = 7.0.2
-modtime = 1525093384.964431000
+modtime = 1526440344.064758000
 
-
-[app/launcher]
+[passwords/credential%3ARyan%20UConn%3ARyan%20UConn%3A]
 owner = admin
 version = 7.0.2
-modtime = 1525093384.968383000
-
-[app/package/check_for_updates]
-version = 7.0.2
-modtime = 1525093384.970039000
-
-[passwords/credential%3ARyan%3ARyan%3A]
-owner = admin
-version = 7.0.2
-modtime = 1525719064.639051000
+modtime = 1526440344.763828000

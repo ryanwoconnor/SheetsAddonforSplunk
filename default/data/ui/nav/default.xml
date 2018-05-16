@@ -1,8 +1,7 @@
 <nav search_view="search" color="#65A637">
   <view name="search" default="true" />
-  <view name="metrics" />
-  <view name="datasets" />
-  <view name="reports" />
-  <view name="alerts" />
+  <collection label="Lookups">
+  <view name="lookup_sheet" />
+</collection>
   <view name="dashboards" />
 </nav>
