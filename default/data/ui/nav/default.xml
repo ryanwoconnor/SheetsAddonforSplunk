@@ -2,6 +2,7 @@
   <view name="search" default="true" />
   <collection label="Lookups">
   <view name="lookup_sheet" />
+  <view name="lookup_csv" />
 </collection>
   <view name="dashboards" />
 </nav>

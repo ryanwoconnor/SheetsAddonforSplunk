@@ -73,7 +73,6 @@ def GetTokens(sesssionKey):
 def GetFiles(api_key, page_token, results, logger):
 	try:
 		r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27')
-		#r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key)
 		r = json.loads(r.text)
 
 		for file in r["files"]:

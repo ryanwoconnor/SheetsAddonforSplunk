@@ -1,5 +1,5 @@
 <form>
-  <label>Lookup Google Sheet</label>
+  <label>Lookup CSV</label>
   <fieldset submitButton="false">
     <input type="dropdown" token="realm">
       <label>Account</label>
@@ -16,7 +16,7 @@
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$"| getsheet</query>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$"| getcsv</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -29,16 +29,14 @@
       <table>
         <tr>
           <td>
-           This Dashboard allows you to import data from a Google Sheet into Splunk. You can start by selecting your Google Account, and then choosing one of the sheets that you have available. For more information on creating Google Sheets, you can visit the <a href="https://www.google.com/sheets/about/">following link</a>.<br/>
+           This Dashboard allows you to import data from a CSV file stored in Google Drive, into Splunk. You can start by selecting your Google Account, and then choosing one of the CSV files that you have available. <br/>
               <br/>
-              <strong>Requirements:</strong> Each Google Sheet you create comes with the possibility of a wide range of features. Unfortunately some of those features make formatting very complex and they are not supported within Splunk. The purpose of this Dashboard is to be able to lookup "CSV" like data inside of a Google Sheet. That means that your spreadsheet should look something like the following screenshot and abide by the following guidelines. 
+              <strong>Requirements:</strong> Each CSV you create should be formatted properly. If you open that CSV file in Google Sheets, you can confirm it looks correct. Here are some guidelines for verifying a CSV file is formatted correctly.  
               <ol>
   <li>
                   <strong>Row 1 should be reserved for your "header".</strong> These are also known as "column names" or "feature names". An example of a header is highlighted in green in the screenshot. You do not need to highlight your header in green.</li>
   <li>
                   <strong>All data should remain within the bounds of your header.</strong> So if you have 4 column names (like in the screenshot) you should only have data in columns A-D, not in column E. Your data should also start in Row 2, not in Row 1. Sample data is highlighted in yellow in the screenshot.  </li>
-  <li>
-                  <strong>This Dashboard only supports exporting the first sheet in a Google Sheet as a CSV file.</strong> This is consistent with the Google API Documentation found <a href="https://developers.google.com/drive/v3/web/manage-downloads">here</a>. The first sheet is highlighted in the screenshot in red. </li>
 </ol>
 <br/>
          If you've followed these guidelines and are still encountering errors, please reach out on Splunk Answers.      
@@ -57,7 +55,7 @@
     <panel>
       <table>
         <search>
-          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$" | eval fileId="$fileId$" | table clear_password username fileId | exportsheet</query>
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$" | eval fileId="$fileId$" | table clear_password username fileId | exportcsv</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>

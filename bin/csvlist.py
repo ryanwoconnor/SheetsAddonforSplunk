@@ -71,8 +71,6 @@ def GetTokens(sesssionKey):
 
 def GetFiles(api_key, page_token, results, logger):
 	try:
-		#r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27+or+name+contains+%27ryan_satoshi_test%27')
-		#r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key)
 		r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&pageToken'+page_token+'&access_token='+api_key+'&q=mimeType+%3d+%27text/csv%27')
 
 		r = json.loads(r.text)
@@ -135,8 +133,6 @@ for result in results:
 	except Exception as e:
 		logger.info(str(e))
 
-#r=requests.get('https://www.googleapis.com/drive/v3/files?access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27+or+name+contains+%27ryan_satoshi_test%27')
-#r=requests.get('https://www.googleapis.com/drive/v3/files?access_token='+api_key)
 r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&access_token='+api_key+'&q=mimeType+%3d+%27text/csv%27')
 
 r = json.loads(r.text)
