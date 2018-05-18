@@ -39,14 +39,13 @@ define(
                 var api_key_input_element = jquery("input[name=api_key]");
                 var api_key = api_key_input_element.val();
                 var sanitized_api_key = api_key;
-
+				
+				
                 var api_key_description_input_element = jquery("input[name=api_key_description]");
                 var api_key_description = api_key_description_input_element.val();
 
- //                var error_messages_to_display = this.validate_inputs(
-//                     sanitized_api_url,
-//                     sanitized_api_key,
-//                 );
+				console.log("Realm is"+api_key_description);
+				console.log("API Key is"+api_key);
 
 				var error_messages_to_display = []
                 var did_error_messages_occur = error_messages_to_display.length > 0;
@@ -56,7 +55,8 @@ define(
                 } else {
                     this.perform_setup(
                         splunk_js_sdk,
-                        sanitized_api_key,
+                        api_key_description,
+                        api_key
                     );
                 }
             },
@@ -123,23 +123,6 @@ define(
                 }
             },
 
-//             create_custom_configuration_file: async function create_custom_configuration_file(
-//                 splunk_js_sdk_service,
-//                 api_url,
-//             ) {
-//                 var custom_configuration_file_name = "setup_view_example";
-//                 var stanza_name = "example_stanza";
-//                 var properties_to_update = {
-//                     api_url: api_url,
-//                 };
-// 
-//                 await this.update_configuration_file(
-//                     splunk_js_sdk_service,
-//                     custom_configuration_file_name,
-//                     stanza_name,
-//                     properties_to_update,
-//                 );
-//             },
 
             encrypt_api_key: async function encrypt_api_key(
                 splunk_js_sdk_service,
@@ -152,7 +135,7 @@ define(
 owner: "-", app: "GoogleDriveAddonforSplunk"
                     },
                 );
-  //               await storage_passwords_accessor.fetch();
+//               await storage_passwords_accessor.fetch();
 // 
 //                 var does_storage_password_exist = this.does_storage_password_exist(
 //                     storage_passwords_accessor,
@@ -168,6 +151,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
 //                     );
 //                 }
                 await storage_passwords_accessor.fetch();
+
 
                 await this.create_storage_password_stanza(
                     storage_passwords_accessor,
@@ -185,7 +169,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
                     is_configured: "true",
                 };
 
-                await this.update_configuration_file(
+              await this.update_configuration_file(
                     splunk_js_sdk_service,
                     configuration_file_name,
                     stanza_name,
@@ -204,7 +188,6 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
                 current_app.reload();
             },
 
-            // ----------------------------------
             // Splunk JS SDK Helpers
             // ----------------------------------
             // ---------------------
@@ -275,6 +258,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
                     properties,
                 );
             },
+
 
             // ---------------------
             // Existence Functions
@@ -348,8 +332,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
 
                 return does_storage_password_exist;
             },
-
-            // ---------------------
+			// ---------------------
             // Retrieval Functions
             // ---------------------
             get_configuration_file: function get_configuration_file(
@@ -386,6 +369,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
             ) {
                 return null;
             },
+
 
             // ---------------------
             // Creation Functions
@@ -456,8 +440,8 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
 
                 return splunk_js_sdk_service_storage_passwords.create(
                     {
-                        name: username,
                         password: value_to_encrypt,
+                        name: username,
                         realm: realm,
                     },
                     function(error_response, response) {
@@ -465,7 +449,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
                     },
                 );
             },
-
+            
             // ----------------------------------
             // Deletion Methods
             // ----------------------------------
@@ -486,60 +470,10 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
                 return sanitized_string;
             },
 
-//             validate_api_url_input: function validate_api_url_input(hostname) {
-//                 var error_messages = [];
-// 
-//                 var is_string_empty = typeof hostname === "undefined" || hostname === "";
-//                 var does_string_start_with_http_protocol = hostname.startsWith("http://");
-//                 var does_string_start_with_https_protocol = hostname.startsWith(
-//                     "https://",
-//                 );
-// 
-//                 if (is_string_empty) {
-//                     error_message =
-//                         "The `API URL` specified was empty. Please provide" + " a value.";
-//                     error_messages.push(error_message);
-//                 }
-//                 if (does_string_start_with_http_protocol) {
-//                     error_message =
-//                         "The `API URL` specified is using `http://` at the" +
-//                         " beginning of it. Please remove the `http://` and" +
-//                         " enter the url with out it in `API URL` field.";
-//                     error_messages.push(error_message);
-//                 }
-//                 if (does_string_start_with_https_protocol) {
-//                     error_message =
-//                         "The `API URL` specified is using `https://` at the" +
-//                         " beginning of it. Please remove the `https://` and" +
-//                         " enter the url with out it in `API URL` field.";
-//                     error_messages.push(error_message);
-//                 }
-// 
-//                 return error_messages;
-//             },
-
-            //validate_api_key_input: function validate_api_key_input(api_key) {
-            //    var error_messages = [];
-
-            //    var is_string_empty = typeof api_key === "undefined" || api_key === "";
-
-            //    if (is_string_empty) {
-            //        error_message =
-            //            "The `API Key` specified was empty. Please provide" + " a value.";
-            //        error_messages.push(error_message);
-            //    }
-
-            //    return error_messages;
-            //},
+//          
 
             validate_inputs: function validate_inputs(api_key_description, api_key) {
                 var error_messages = [];
-
-                //var api_url_errors = this.validate_api_url_input(hostname);
-                //var api_key_errors = this.validate_api_key_input(api_key);
-
-                //error_messages = error_messages.concat(api_url_errors);
-                //error_messages = error_messages.concat(api_key_errors);
 
                 return error_messages;
             },
@@ -647,6 +581,8 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
                     "        <div class='error output'>" +
                     "        </div>" +
                     "    </div>" +
+                    "  <div class='right'>"+
+                    " </div>"+
                     "</div>";
 
                 return template_string;
