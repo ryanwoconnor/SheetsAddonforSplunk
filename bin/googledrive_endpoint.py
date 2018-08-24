@@ -18,12 +18,12 @@ class GoogleDriveApp(admin.MConfigHandler):
 
     def handleList(self, confInfo):
 
-        my_app = "google_drive"
+        my_app = "GoogleDriveAddonforSplunk"
 
         try:
 
             sessionKey = self.getSessionKey()
-            get_path = '/servicesNS/nobody/google_drive/storage/passwords?output_mode=json'
+            get_path = '/servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords?output_mode=json'
             serverResponse = splunk.rest.simpleRequest(get_path, sessionKey=sessionKey, method='GET',
                                                            raiseAllErrors=True)
             jsonObj = json.loads(serverResponse[1])
@@ -61,7 +61,7 @@ class GoogleDriveApp(admin.MConfigHandler):
 
             try:
                 sessionKey = self.getSessionKey()
-                post_path = '/servicesNS/nobody/google_drive/storage/passwords?output_mode=json'
+                post_path = '/servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords?output_mode=json'
                 creds = {"name": entity_name, "password": entity_value, "realm": entity_name}
                 serverResponse, serverContent = splunk.rest.simpleRequest(post_path, sessionKey=sessionKey, postargs=creds, method='POST',
                                                           raiseAllErrors=True)
@@ -77,7 +77,7 @@ class GoogleDriveApp(admin.MConfigHandler):
 
             try:
                 sessionKey = self.getSessionKey()
-                post_path = '/servicesNS/nobody/google_drive/storage/passwords/' + entity
+                post_path = '/servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords/' + entity
                 serverResponse, serverContent = splunk.rest.simpleRequest(post_path, sessionKey=sessionKey, method='DELETE',
                                                           raiseAllErrors=True)
             except Exception, e:

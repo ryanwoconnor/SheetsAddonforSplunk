@@ -36,7 +36,7 @@ def setup_logger(level):
     return logger
 
 def DeleteToken(sessionKey, user):
-    splunkService = client.connect(token=sessionKey,app='google_drive')
+    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
     try:
         splunkService.storage_passwords.delete(user,user)
     except Exception as e:

@@ -1,7 +1,7 @@
 
 from splunk.appserver.mrsparkle.lib.util import make_splunkhome_path
 from splunk.models.base import SplunkAppObjModel
-from google_drive_app.modular_input import Field, ModularInput, DurationField, BooleanField, DeprecatedField
+from GoogleDriveAddonforSplunk_app.modular_input import Field, ModularInput, DurationField, BooleanField, DeprecatedField
 from splunk.models.field import Field as ModelField
 from splunk.models.field import IntField as ModelIntField 
 
@@ -14,7 +14,7 @@ import os
 import httplib2
 from httplib2 import socks
 
-from google_drive_app import GoogleLookupSync, SpreadsheetInaccessible
+from GoogleDriveAddonforSplunk_app import GoogleLookupSync, SpreadsheetInaccessible
     
 class Timer(object):
     """
@@ -282,7 +282,7 @@ class GoogleSpreadsheets(ModularInput):
     def get_credentials_from_oauth_file(self, service_account_key_file):
         
         # Load the key file
-        json_key = json.load(open(make_splunkhome_path(['etc', 'apps', 'google_drive', 'service_account_keys', os.path.basename(service_account_key_file)])))
+        json_key = json.load(open(make_splunkhome_path(['etc', 'apps', 'GoogleDriveAddonforSplunk', 'service_account_keys', os.path.basename(service_account_key_file)])))
         
         # Return the credentials
         return json_key['client_email'], json_key['private_key']

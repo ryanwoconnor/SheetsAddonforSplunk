@@ -6,7 +6,7 @@
       <fieldForLabel>realm</fieldForLabel>
       <fieldForValue>realm</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/google_drive/storage/passwords | table realm clear_password</query>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -16,7 +16,7 @@
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/google_drive/storage/passwords | search realm="$realm$"| getcsv</query>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$"| getcsv</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -45,7 +45,7 @@
       <fieldForLabel>title</fieldForLabel>
       <fieldForValue>output_command</fieldForValue>
       <search>
-        <query>|rest /servicesNS/nobody/google_drive/data/lookup-table-files | dedup title | table eai:acl.app eai:appName filename title fields_list updated id | eval export_answer="$export_answer$" | eval output_command=case(export_answer=="yes", "| outputlookup ".title, export_answer=="no","") | dedup output_command</query>
+        <query>|rest /servicesNS/nobody/GoogleDriveAddonforSplunk/data/lookup-table-files | dedup title | table eai:acl.app eai:appName filename title fields_list updated id | eval export_answer="$export_answer$" | eval output_command=case(export_answer=="yes", "| outputlookup ".title, export_answer=="no","") | dedup output_command</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -76,7 +76,7 @@
         <tr>
           <td>
             <center>
-                <img src="/static/app/google_drive/sheet_info.jpg"/>
+                <img src="/static/app/GoogleDriveAddonforSplunk/sheet_info.jpg"/>
               </center>
           </td>
         </tr>
@@ -86,7 +86,7 @@
     <panel>
       <table>
         <search>
-          <query>| rest /servicesNS/nobody/google_drive/storage/passwords `getcsv("$realm$", "$fileId$")` $outputlookup_filename$</query>
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `getcsv("$realm$", "$fileId$")` $outputlookup_filename$</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>

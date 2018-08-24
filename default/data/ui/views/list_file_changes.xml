@@ -7,7 +7,7 @@
       <fieldForLabel>realm</fieldForLabel>
       <fieldForValue>realm</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/google_drive/storage/passwords | table realm clear_password</query>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -18,7 +18,7 @@
       <table>
         <title>File Change List</title>
         <search>
-          <query>|rest /servicesNS/nobody/google_drive/storage/passwords `listchanges($realm$)` | table mimeType name</query>
+          <query>|rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listchanges($realm$)` | table mimeType name</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>

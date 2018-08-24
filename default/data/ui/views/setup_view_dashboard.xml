@@ -9,7 +9,7 @@ http://docs.splunk.com/Documentation/Splunk/latest/Viz/PanelreferenceforSimplifi
 <dashboard isDashboard="false"
            script="javascript/setup_page.js"
            stylesheet="styles/setup_page.css">
-    <label>Google Sheet Add-on Setup Page</label>
+    <label>Google Drive Add-on Setup Page</label>
 
     <row>
         <panel>

@@ -51,23 +51,23 @@ def RefreshToken(refresh_token, user, sessionKey):
         logger.info(str(e))
 
 def ListTokens(sessionKey):
-    splunkService = client.connect(token=sessionKey,app='google_drive')
+    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
     for storage_password in splunkService.storage_passwords:
         logger.info(storage_password.name)
 
 def CreateToken(sessionKey, password, user, realm):
-    splunkService = client.connect(token=sessionKey,app='google_drive')
+    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
     splunkService.storage_passwords.create(password, user, realm)
 
 def DeleteToken(sessionKey, user):
-    splunkService = client.connect(token=sessionKey,app='google_drive')
+    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
     try:
         splunkService.storage_passwords.delete(user,user)
     except Exception as e:
         logger.info(str(e))
 
 def GetTokens(sesssionKey):
-    splunkService = client.connect(token=sessionKey,app='google_drive')   
+    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')   
     return splunkService.storage_passwords
 
 def GetChanges(api_key, page_token, results, logger):
@@ -133,7 +133,7 @@ for result in results:
 
 		#Get startPageToken from KVStore
 		startPageToken = "0"
-		service = client.connect(token=sessionKey, owner='nobody', app='google_drive') 
+		service = client.connect(token=sessionKey, owner='nobody', app='GoogleDriveAddonforSplunk') 
 		checkpoint_data=service.kvstore['googledrivecheckpoints'].data.query()
 
 

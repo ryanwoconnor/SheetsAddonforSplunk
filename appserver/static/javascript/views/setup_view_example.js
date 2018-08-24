@@ -63,7 +63,7 @@ define(
 
             // This is where the main setup process occurs
             perform_setup: async function perform_setup(splunk_js_sdk, api_key_description, api_key) {
-                var app_name = "google_drive";
+                var app_name = "GoogleDriveAddonforSplunk";
 
                 var application_name_space = {
                     owner: "nobody",
@@ -132,7 +132,7 @@ define(
                 // /servicesNS/<NAMESPACE_USERNAME>/<SPLUNK_APP_NAME>/storage/passwords/<REALM>%3A<USERNAME>%3A
                 var storage_passwords_accessor = splunk_js_sdk_service.storagePasswords(
                     {
-owner: "-", app: "google_drive"
+owner: "-", app: "GoogleDriveAddonforSplunk"
                     },
                 );
 //               await storage_passwords_accessor.fetch();
@@ -162,7 +162,7 @@ owner: "-", app: "google_drive"
             },
 
             complete_setup: async function complete_setup(splunk_js_sdk_service) {
-                var app_name = "google_drive";
+                var app_name = "GoogleDriveAddonforSplunk";
                 var configuration_file_name = "app";
                 var stanza_name = "install";
                 var properties_to_update = {
