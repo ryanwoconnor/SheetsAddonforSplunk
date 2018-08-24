@@ -1,0 +1,66 @@
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install --yes scrot
+sudo apt-get install --yes vim
+sudo apt-get install --yes python-psutil
+sudo apt-get install --yes dnsutils 
+sudo apt-get install --yes python-picamera
+sudo apt-get install --yes python-opencv
+
+#NEEDED
+pip install configparser
+
+pip install tinys3
+
+pip install pyyaml
+
+pip install adafruit-mcp3008
+
+pip install camera
+
+
+touch /home/pi/.vimrc
+echo "set mouse-=a" >> /home/pi/.vimrc
+mkdir /home/pi/.ssh
+touch /home/pi/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNtw9yiCuNddQDHxMXCad3dOpGeApAjKlujLxToj4FKMu2lvrjzOdaPx1/QR14+qTRjYClo3CQ8P/k+wL2RL/YYfaPk5flF+bbXn9QkQJzp8Ai+yjiOfadMXLhaak92FWI1JxO1juaXMBn5JuAnnUqOAOUYF/8arXwquwySK9mipXx6Pyk4M51Cx2pAfOvbsJJbKyTdvu6sUN3S/N7AdfsqarDovLWONITS1PLcKyiaRjmrv811zzR9uxXbyz08wBY6AmYTezZofvMntNZk1IwbPyMQiLMSAAoGSLM4o80uGqu3URz/EgPoZbiA9nqC1dC9qewxW5nT/EIZ+XwWmU1 ryan.oconnor@gmail.com" | sudo tee -a  /home/pi/.ssh/authorized_keys
+
+
+sudo echo "network={ " | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf
+sudo echo "        ssid=\"NETGEAR90\"" | sudo tee -a  /etc/wpa_supplicant/wpa_supplicant.conf
+sudo echo "        key_mgmt=NONE" | sudo tee -a  /etc/wpa_supplicant/wpa_supplicant.conf
+sudo echo "}" | sudo tee -a  /etc/wpa_supplicant/wpa_supplicant.conf
+
+sudo echo "network={ " | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf
+sudo echo "        ssid=\"Spring Valley Secure\"" | sudo tee -a  /etc/wpa_supplicant/wpa_supplicant.conf
+sudo echo "        psk=\"Iamthepassword"'!'"\"" | sudo tee -a  /etc/wpa_supplicant/wpa_supplicant.conf
+sudo echo "        key_mgmt=WPA-PSK" | sudo tee -a  /etc/wpa_supplicant/wpa_supplicant.conf
+sudo echo "}" | sudo tee -a  /etc/wpa_supplicant/wpa_supplicant.conf
+
+
+mkdir /home/pi/scripts
+touch /home/pi/scripts/system_info.py
+
+echo "* * * * * python /home/pi/scripts/system_info.py" | crontab -e
+
+(crontab -l ; echo "* * * * * python /home/pi/scripts/system_info.py") | crontab -
+
+
+(crontab -l ; echo "* * * * * python /home/pi/scripts/system_info.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "* * * * * python /home/pi/scripts/dht11.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "* * * * * python /home/pi/scripts/uv.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "* * * * * python /home/pi/scripts/ds18b20.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "* * * * * python /home/pi/scripts/dht22.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "* * * * * python /home/pi/scripts/door_sensor.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "0 * * * * python /home/pi/scripts/do.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "0 * * * * python /home/pi/scripts/ph.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "0 * * * * python /home/pi/scripts/tplink_aquaponics01.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "0 * * * * python /home/pi/scripts/tplink_aquaponics02.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "0 * * * * python /home/pi/scripts/tplink_aquaponics03.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+(crontab -l ; echo "0 * * * * python /opt/iot_class_scripts/raspberry-pi-s3-cam/s3cam.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+
+
+(crontab -l ; echo "* * * * * /usr/bin/flock -n /tmp/tilt.lockfile /usr/bin/python2.7 /home/pi/scripts/tilt.py") 2>&1 | grep -v "no crontab" | sort | uniq | crontab -
+* * * * * /usr/bin/flock -n /tmp/tilt.lockfile /usr/bin/python2.7 /home/pi/scripts/tilt.py
+
+sudo echo "dtoverlay=w1-gpio" | sudo tee -a  /boot/config.txt

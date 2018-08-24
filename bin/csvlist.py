@@ -50,23 +50,23 @@ def RefreshToken(refresh_token, user, sessionKey):
         logger.info(str(e))
 
 def ListTokens(sessionKey):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
+    splunkService = client.connect(token=sessionKey,app='google_drive')
     for storage_password in splunkService.storage_passwords:
         logger.info(storage_password.name)
 
 def CreateToken(sessionKey, password, user, realm):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
+    splunkService = client.connect(token=sessionKey,app='google_drive')
     splunkService.storage_passwords.create(password, user, realm)
 
 def DeleteToken(sessionKey, user):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
+    splunkService = client.connect(token=sessionKey,app='google_drive')
     try:
         splunkService.storage_passwords.delete(user,user)
     except Exception as e:
         logger.info(str(e))
 
 def GetTokens(sesssionKey):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')   
+    splunkService = client.connect(token=sessionKey,app='google_drive')   
     return splunkService.storage_passwords
 
 def GetFiles(api_key, page_token, results, logger):
@@ -129,35 +129,41 @@ for result in results:
 		new_creds = json.loads(new_creds)
 		api_key=new_creds["APIKey"]
 
+		r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&access_token='+api_key+'&q=mimeType+%3d+%27text/csv%27')
+
+		r = json.loads(r.text)
+
+		results = []
+		for file in r["files"]:
+			result={}
+			if "name" in file:
+				result["name"] = file["name"]
+			else:
+				result["name"] = "(None)"
+		
+			if "id" in file:
+				result["id"] = file["id"]
+			else:
+				result["id"] = "(None)"
+		
+			if "mimeType" in file:
+				result["mimeType"] = file["mimeType"]
+			else:
+				result["mimeType"] = "(None)"
+			results.append(result)
+
+		if 'nextPageToken' in r:
+			page_token=r["nextPageToken"]
+			results = GetFiles(api_key, page_token, results, logger)
+
+		splunk.Intersplunk.outputResults(results)
         	
 	except Exception as e:
 		logger.info(str(e))
+		results = []
+		result = {}
+		result["Error"] = str(e)
+		results.append(result)
+		splunk.Intersplunk.outputResults(results)
 
-r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&access_token='+api_key+'&q=mimeType+%3d+%27text/csv%27')
 
-r = json.loads(r.text)
-
-results = []
-for file in r["files"]:
-	result={}
-	if "name" in file:
-		result["name"] = file["name"]
-	else:
-		result["name"] = "(None)"
-		
-	if "id" in file:
-		result["id"] = file["id"]
-	else:
-		result["id"] = "(None)"
-		
-	if "mimeType" in file:
-		result["mimeType"] = file["mimeType"]
-	else:
-		result["mimeType"] = "(None)"
-	results.append(result)
-
-if 'nextPageToken' in r:
-	page_token=r["nextPageToken"]
-	results = GetFiles(api_key, page_token, results, logger)
-
-splunk.Intersplunk.outputResults(results)

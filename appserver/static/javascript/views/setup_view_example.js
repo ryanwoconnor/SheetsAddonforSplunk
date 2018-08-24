@@ -63,7 +63,7 @@ define(
 
             // This is where the main setup process occurs
             perform_setup: async function perform_setup(splunk_js_sdk, api_key_description, api_key) {
-                var app_name = "GoogleDriveAddonforSplunk";
+                var app_name = "google_drive";
 
                 var application_name_space = {
                     owner: "nobody",
@@ -132,7 +132,7 @@ define(
                 // /servicesNS/<NAMESPACE_USERNAME>/<SPLUNK_APP_NAME>/storage/passwords/<REALM>%3A<USERNAME>%3A
                 var storage_passwords_accessor = splunk_js_sdk_service.storagePasswords(
                     {
-owner: "-", app: "GoogleDriveAddonforSplunk"
+owner: "-", app: "google_drive"
                     },
                 );
 //               await storage_passwords_accessor.fetch();
@@ -162,7 +162,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
             },
 
             complete_setup: async function complete_setup(splunk_js_sdk_service) {
-                var app_name = "GoogleDriveAddonforSplunk";
+                var app_name = "google_drive";
                 var configuration_file_name = "app";
                 var stanza_name = "install";
                 var properties_to_update = {
@@ -548,7 +548,7 @@ owner: "-", app: "GoogleDriveAddonforSplunk"
                     "<div class='setup container'>" +
                     "    <div class='left'>" +
                     "        <h2>Setup Steps</h2>" +
-                    "        1.  Visit <a target=\"_blank\" href=\"https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=https://eop2idyodk.execute-api.us-west-2.amazonaws.com/prod/getgoogledrivekey/&response_type=code&access_type=offline&client_id=117452562403-t7kabg8crp84g844d5oh3vudg829dup4.apps.googleusercontent.com&prompt=consent\">this URL</a> and click accept to allow this app to query your device. <br></br>2.  After authorizing this app, you will be granted an APIKey in a JSON Format like the following: <br></br> {\"APIKey\":\"<strong>c.123456433</strong>\", \"RefreshToken\": \"<strong>f4f...</strong>\"} <br></br> 3.  Copy and paste this entire text blob into the JSON field below. <br></br>4.  You should also provide a unique name for this account in the \"Account Description\" field." +
+                    "        1.  Visit <a target=\"_blank\" href=\"https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fspreadsheets&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=https://eop2idyodk.execute-api.us-west-2.amazonaws.com/prod/getgoogledrivekey/&response_type=code&access_type=offline&client_id=117452562403-t7kabg8crp84g844d5oh3vudg829dup4.apps.googleusercontent.com&prompt=consent\">this URL</a> and click accept to allow this app to query your device. <br></br>2.  After authorizing this app, you will be granted an APIKey in a JSON Format like the following: <br></br> {\"APIKey\":\"<strong>c.123456433</strong>\", \"RefreshToken\": \"<strong>f4f...</strong>\"} <br></br> 3.  Copy and paste this entire text blob into the JSON field below. <br></br>4.  You should also provide a unique name for this account in the \"Account Description\" field." +
                     "        <div class='field api_key'>" +
                     "            <div class='title'>" +
                     "                <h3>Account Description:</h3>" +

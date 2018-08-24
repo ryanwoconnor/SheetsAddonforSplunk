@@ -14,6 +14,7 @@ import sys
 import splunk.rest
 import datetime
 import re
+import csv
 import logging
 import logging.handlers
 import sys
@@ -71,8 +72,7 @@ def GetTokens(sesssionKey):
 
 def GetFiles(api_key, page_token, results, logger):
 	try:
-		r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&pageToken'+page_token+'&access_token='+api_key+'&q=mimeType+%3d+%27application/vnd.google-apps.spreadsheet%27')
-
+		r=requests.get('https://www.googleapis.com/drive/v3/files?pageToken'+page_token+'&access_token='+api_key+'&q=name+contains+%27.spreadsheet%27+or+name+contains+%27csv%27+or+name+contains+%27xls%27')
 		r = json.loads(r.text)
 
 		for file in r["files"]:
@@ -101,6 +101,91 @@ def GetFiles(api_key, page_token, results, logger):
 	except Exception as e:
 		logger.info(str(e))
 		return results
+		
+def GetSheet(api_key, id, logger):
+	try:
+		results = []
+		r=requests.get('https://www.googleapis.com/drive/v3/files/'+id+'/export?access_token='+api_key+'&mimeType=text/csv')
+		reader = csv.reader(r.text.splitlines())
+		
+		i_row=0
+		keys=[]
+		for row in reader:
+			if i_row==0:
+				i_header=0
+				for header in row:
+					key = {}
+					key[i_header]=header
+					keys.append(key)
+					i_header = i_header + 1
+				i_row=i_row+1
+				break
+		i_row=0
+
+		result = {}
+		for row in reader:
+			#if i_row==0:
+			#	i_row=i_row+1
+			#	continue
+			i_row_value = 0
+			result = {}
+			for item in row:
+				result[keys[i_row_value][i_row_value]]=item
+				i_row_value = i_row_value + 1
+			results.append(result)
+			i_row=i_row+1		
+		return results
+   		
+	except Exception as e:
+		results = []
+		result["ERROR"] = str(e)
+		results.append(result)
+		logger.info(str(e))
+		return results
+		
+def GetSubSheet(api_key, i_row_initial, subsheetId, id, logger, cell_range):
+	try:
+		results = []
+		r=requests.get('https://sheets.googleapis.com/v4/spreadsheets/'+id+'/values/'+subsheetId+'!'+cell_range+'?access_token='+api_key)
+		#reader = csv.reader(r.text.splitlines())
+		r = json.loads(r.text)
+		reader=r["values"]
+		i_row=0
+		keys=[]
+		for row in reader:
+			if i_row==int(i_row_initial):
+				i_header=0
+				for header in row:
+					key = {}
+					key[i_header]=header
+					keys.append(key)
+					i_header = i_header + 1
+			i_row=i_row+1
+
+		i_row=0
+		i_row_value = 0
+		result = {}
+		for row in reader:
+			if i_row<=int(i_row_initial):
+				i_row=i_row+1
+				continue
+			if i_row>int(i_row_initial):
+				i_row_value = 0
+				result = {}
+				for item in row:
+					result[keys[i_row_value][i_row_value]]=item
+					i_row_value = i_row_value + 1
+				results.append(result)
+				i_row=i_row+1		
+			
+		return results
+   		
+	except Exception as e:
+		results = []
+		result["ERROR"] = str(e)
+		results.append(result)
+		logger.info(str(e))
+		return results
 
 now = datetime.datetime.now()
 
@@ -110,12 +195,25 @@ logger = setup_logger(logging.INFO)
 results,dummy,settings = splunk.Intersplunk.getOrganizedResults()
 sessionKey = settings.get("sessionKey")
 
+keywords, options = splunk.Intersplunk.getKeywordsAndOptions()
+if "headerRow" in options:
+	i_row = options["headerRow"]
+else:
+	i_row=0
+
+if "cellRange" in options:
+	cell_range = options["cellRange"]
+else:
+	cell_range = "A1:ZZ"
+
 for result in results:
 	try:
 		#Get Google Drive Name and API Creds from Password Store
 		username=result['username']
 		password=result['clear_password']
 
+		fileId = result['fileId']
+		subsheetId = result['subsheetId']
 		#Parse JSON API Creds
 		tokens = json.loads(password)
 	
@@ -128,36 +226,15 @@ for result in results:
 		#Get New API Key	
 		new_creds = json.loads(new_creds)
 		api_key=new_creds["APIKey"]
-		r=requests.get('https://www.googleapis.com/drive/v3/files?pageSize=1000&access_token='+api_key+'&q=mimeType+%3d+%27application/vnd.google-apps.spreadsheet%27')
-
-		r = json.loads(r.text)
-
-		results = []
-		for file in r["files"]:
-			result={}
-			if "name" in file:
-				result["name"] = file["name"]
-			else:
-				result["name"] = "(None)"
 		
-			if "id" in file:
-				result["id"] = file["id"]
-			else:
-				result["id"] = "(None)"
+		try:
+			new = GetSubSheet(api_key, i_row, subsheetId, fileId, logger, cell_range)
+		except Exception as e:
+			logger.info(str(e))
+
+		splunk.Intersplunk.outputResults(new)
+
 		
-			if "mimeType" in file:
-				result["mimeType"] = file["mimeType"]
-			else:
-				result["mimeType"] = "(None)"
-			results.append(result)
-
-		if 'nextPageToken' in r:
-			page_token=r["nextPageToken"]
-			results = GetFiles(api_key, page_token, results, logger)
-
-		splunk.Intersplunk.outputResults(results)
-
-        	
 	except Exception as e:
 		logger.info(str(e))
 		results = []
@@ -165,3 +242,5 @@ for result in results:
 		result["Error"] = str(e)
 		results.append(result)
 		splunk.Intersplunk.outputResults(results)
+
+
