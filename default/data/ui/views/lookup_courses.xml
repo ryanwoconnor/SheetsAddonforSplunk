@@ -1,0 +1,106 @@
+<form>
+  <label>Analyze Class Assignments</label>
+  <search id="baseSearch">
+    <query>
+      | rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourseworksubmission("$realm$", "$courseId$", "$courseWorkId$")` | join userId [| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `liststudents("$realm$", "$courseId$")`] | eval "Grade Percent"=(pointsEarned/maxPoints)*100 | fillnull value=0 "Grade Percent"
+    </query>
+  </search>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="dropdown" token="realm">
+      <label>Account</label>
+      <fieldForLabel>realm</fieldForLabel>
+      <fieldForValue>realm</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="courseId" searchWhenChanged="false">
+      <label>Class</label>
+      <fieldForLabel>name</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")`</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="courseWorkId">
+      <label>Assignment</label>
+      <fieldForLabel>title</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcoursework("$realm$", "$courseId$")`</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="radio" token="format" searchWhenChanged="true">
+      <label>Time Format</label>
+      <choice value="Hours">Hours</choice>
+      <choice value="Days">Days</choice>
+      <choice value="Minutes">Minutes</choice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Assignment Completion Time Stats</title>
+      <chart>
+        <search base="baseSearch">
+          <query>| eval turned_in_epoch = strptime(turned_in_time, "%Y-%m-%dT%T.%3NZ") 
+| eval created_epoch = strptime(creationTime, "%Y-%m-%dT%T.%3NZ") 
+| eval turn_in_days=(turned_in_epoch-created_epoch)/60/60/24
+| eval turn_in_hours=(turned_in_epoch-created_epoch)/60/60
+| eval turn_in_minutes=(turned_in_epoch-created_epoch)/60
+| eval courseWorkId="$courseWorkId$"
+| stats max(turn_in_days) as "Maximum Days" avg(turn_in_days) as "Average Days" min(turn_in_days) as "Minimum Days" max(turn_in_hours) as "Maximum Hours" avg(turn_in_hours) as "Average Hours" min(turn_in_hours) as "Minimum Hours"  max(turn_in_minutes) as "Maximum Minutes" avg(turn_in_minutes) as "Average Minutes" min(turn_in_minutes) as "Minimum Minutes" | fields + *$format$* | transpose | rename "row 1" as "Assignment"</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Assignment Completion Times (By User)</title>
+      <chart>
+        <search base="baseSearch">
+          <query>| eval turned_in_epoch = strptime(turned_in_time, "%Y-%m-%dT%T.%3NZ") 
+| eval created_epoch = strptime(creationTime, "%Y-%m-%dT%T.%3NZ") 
+| eval "Turn In Days"=(turned_in_epoch-created_epoch)/60/60/24 
+| eval "Turn In Hours"=round((turned_in_epoch-created_epoch)/60/60,0) 
+| eval "Turn In Minutes"=round((turned_in_epoch-created_epoch)/60,0) 
+| sort 0 - "Turn In $format$"
+| fields + FullName *$format$*</query>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Assignment Grade Breakdown</title>
+      <chart>
+        <search base="baseSearch">
+          <query>| stats max("Grade Percent") as "Maximum Grade" avg("Grade Percent") as "Average Grade" min("Grade Percent") as "Minimum Grade" | transpose | rename "row 1" as "Assignment"</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.drilldown">none</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search base="baseSearch">
+          <query/>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>
