@@ -32,6 +32,9 @@
 1. Open Google App for Splunk from the Apps Dropdown
 2. Click “Continue to App Setup Page”
 3. Follow Instructions to Get an API Key
+
+![Alt text](/images/auth1.jpg?raw=true "Auth Option 1")
+
 4. Restart Splunk
 
 ### Setup Python for Scientific Computing with custom python libraries
