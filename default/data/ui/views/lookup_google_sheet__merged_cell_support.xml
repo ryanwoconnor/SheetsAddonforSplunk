@@ -21,7 +21,7 @@
         <latest>now</latest>
       </search>
     </input>
-    <input type="dropdown" token="subsheetId">
+    <input type="dropdown" token="subsheet">
       <label>Subsheet Select</label>
       <fieldForLabel>title</fieldForLabel>
       <fieldForValue>title</fieldForValue>
@@ -30,11 +30,6 @@
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
-    </input>
-    <input type="text" token="cellRange">
-      <label>Cell Range</label>
-      <default>A1:ZZ</default>
-      <initialValue>A1:ZZ</initialValue>
     </input>
     <input type="text" token="headerRow">
       <label>Header Row</label>
@@ -77,7 +72,8 @@
     <panel>
       <table>
         <search>
-          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheetId$", "$headerRow$", "$cellRange$")` $outputlookup_filename$ 
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheet$", "$headerRow$", "$cellRange$")` $outputlookup_filename$ 
+| eval headerrow=$headerRow$
 | fit HTMLTableDecode content 
 | fields - content</query>
           <earliest>-24h@h</earliest>
