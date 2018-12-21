@@ -33,8 +33,7 @@
     </input>
     <input type="text" token="cellRange">
       <label>Cell Range</label>
-      <default>A1:ZZ</default>
-      <initialValue>A1:ZZ</initialValue>
+      <default>All</default>
     </input>
     <input type="text" token="headerRow">
       <label>Header Row</label>

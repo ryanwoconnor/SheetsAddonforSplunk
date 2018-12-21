@@ -205,7 +205,8 @@ if "cellRange" in options:
 	cell_range = options["cellRange"]
 else:
 	cell_range = "A1:ZZ"
-if cell_range == "All Cells":
+
+if options["cellRange"] == "All":
 	cell_range = "A1:ZZ"
 
 for result in results:
