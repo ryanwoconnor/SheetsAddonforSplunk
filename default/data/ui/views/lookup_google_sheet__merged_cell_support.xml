@@ -72,7 +72,7 @@
     <panel>
       <table>
         <search>
-          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheet$", "$headerRow$", "$cellRange$")` $outputlookup_filename$ 
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheet$", "$headerRow$")` $outputlookup_filename$ 
 | eval headerrow=$headerRow$
 | fit HTMLTableDecode content 
 | fields - content</query>
