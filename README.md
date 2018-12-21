@@ -1,9 +1,47 @@
 
 # Google App for Splunk
 
+- [Google App for Splunk](#google-app-for-splunk)
+  * [Requirements](#requirements)
+  * [Installation Steps](#installation-steps)
+    + [Install Google App for Splunk](#install-google-app-for-splunk)
+    + [Install Python for Scientific Computing](#install-python-for-scientific-computing)
+    + [Install Splunk Machine Learning Toolkit](#install-splunk-machine-learning-toolkit)
+  * [Configure Apps](#configure-apps)
+    + [Setup Google App for Splunk](#setup-google-app-for-splunk)
+    + [Setup Python for Scientific Computing with custom python libraries](#setup-python-for-scientific-computing-with-custom-python-libraries)
+    + [Install Custom Splunk ML Algorithms](#install-custom-splunk-ml-algorithms)
+  * [Recommended Google Data Format](#recommended-google-data-format)
+    + [Google Sheet Feature Support](#google-sheet-feature-support)
+  * [Security](#security)
+      - [Revoking Access](#revoking-access)
+
+
+
+
+## Requirements
+
+For full-functionality of this app, you will want to install side-by-side with the following Splunk Apps:
+
+* Splunk Machine Learning Toolkit 4.1 and Above
+* Splunk App: Python for Scientific Computing.
+
+_Note: Make sure you install the correct version of Python for Scientific Computing for your OS_
+* Python for Scientific Computing - Linux 64-bit - https://splunkbase.splunk.com/app/2882/
+* Python for Scientific Computing - Mac - https://splunkbase.splunk.com/app/2881/
+* Python for Scientific Computing - Linux 32-bit - https://splunkbase.splunk.com/app/2884/
+* Python for Scientific Computing - Windows - https://splunkbase.splunk.com/app/2883/
+
+This App is tested against
+
+* Splunk 7.1 and Above
+* Splunk Machine Learning Toolkit 4.1
+* Mac OSX
+* Ubuntu Linux
+
 ## Installation Steps
 
-## Install Google App for Splunk
+### Install Google App for Splunk
 1. Install Splunk
 2. Clone GoogleDriveAddonforSplunk into /opt/splunk/etc/apps
 3. Start Splunk
@@ -27,7 +65,7 @@
 
 ## Configure Apps
 
-## Setup Google App for Splunk
+### Setup Google App for Splunk
 1. Open Google App for Splunk from the Apps Dropdown
 2. Click “Continue to App Setup Page”
 3. Follow Instructions to Get an API Key
