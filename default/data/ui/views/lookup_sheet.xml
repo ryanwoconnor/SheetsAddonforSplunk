@@ -86,49 +86,4 @@
       </table>
     </panel>
   </row>
-  <row>
-    <panel>
-      <title>Number of Sheets inside this Google Sheet</title>
-      <single>
-        <search>
-          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$" | eval fileId="$fileId$" | subsheetlist | stats count</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
-        </search>
-        <option name="drilldown">none</option>
-        <option name="refresh.display">progressbar</option>
-      </single>
-    </panel>
-    <panel>
-      <title>Information</title>
-      <html>
-      <table>
-        <tr>
-          <td>
-           This Dashboard allows you to import data from a Google Sheet into Splunk. You can start by selecting your Google Account, and then choosing one of the sheets that you have available. For more information on creating Google Sheets, you can visit the <a href="https://www.google.com/sheets/about/">following link</a>.<br/>
-              <br/>
-              <strong>Requirements:</strong> Each Google Sheet you create comes with the possibility of a wide range of features. Unfortunately some of those features make formatting very complex and they are not supported within Splunk. The purpose of this Dashboard is to be able to lookup "CSV" like data inside of a Google Sheet. That means that your spreadsheet should look something like the following screenshot and abide by the following guidelines. 
-              <ol>
-  <li>
-                  <strong>Row 1 should be reserved for your "header".</strong> These are also known as "column names" or "feature names". An example of a header is highlighted in green in the screenshot. You do not need to highlight your header in green.</li>
-  <li>
-                  <strong>All data should remain within the bounds of your header.</strong> So if you have 4 column names (like in the screenshot) you should only have data in columns A-D, not in column E. Your data should also start in Row 2, not in Row 1. Sample data is highlighted in yellow in the screenshot.  </li>
-  <li>
-                  <strong>This Dashboard supports performing a lookup of any GRID style sheets in your Google Spreadsheet.</strong>  You are also able to lookup multiple subsheets inside of a Google Sheet. You can select any Spreadsheet and any subsheet using the dropdowns above. </li>
-</ol>
-<br/>
-         If you've followed these guidelines and are still encountering errors, please reach out on Splunk Answers.      
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <center>
-                <img src="/static/app/GoogleDriveAddonforSplunk/sheet_info.jpg"/>
-              </center>
-          </td>
-        </tr>
-      </table>
- </html>
-    </panel>
-  </row>
 </form>
