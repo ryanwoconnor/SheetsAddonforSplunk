@@ -87,10 +87,17 @@ pip install html5lib pandas bs4 numpy --target=.
 ```
 
 ### Install Custom Splunk ML Algorithms
+1. Clone the mltk-algo-contrib repo and cd into the directory:
+```
+git clone https://github.com/splunk/mltk-algo-contrib.git
+cd mltk-algo-contrib
+```
 
-```<THIS NEEDS TO BE FILLED OUT WHEN RYAN GETS ACCESS TO SPLUNK GIT>>```
-  
-  
+2. Symlink the src directory to the apps folder in Splunk and restart splunkd:
+```
+ln -s "$(pwd)/src" $SPLUNK_HOME/etc/apps/SA_mltk_contrib_app
+$SPLUNK_HOME/bin/splunk restart
+```
 
 ## Recommended Google Data Format
 
