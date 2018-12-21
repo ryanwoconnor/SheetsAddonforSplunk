@@ -3,7 +3,7 @@
 
 - [Google App for Splunk](#google-app-for-splunk)
   * [Requirements](#requirements)
-  * [Installation Steps](#installation-steps)
+  * [Installing Required Apps](#installing-required-apps)
     + [Install Google App for Splunk](#install-google-app-for-splunk)
     + [Install Python for Scientific Computing](#install-python-for-scientific-computing)
     + [Install Splunk Machine Learning Toolkit](#install-splunk-machine-learning-toolkit)
@@ -39,7 +39,7 @@ This App is tested against
 * Mac OSX
 * Ubuntu Linux
 
-## Installation Steps
+## Installing Required Apps
 
 ### Install Google App for Splunk
 1. Install Splunk
