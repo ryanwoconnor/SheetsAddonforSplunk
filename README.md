@@ -48,7 +48,7 @@ This App is tested against
 4. Login to Splunk
 
 ### Install Python for Scientific Computing
-1. Download the appropriate Python for Scientific Computing app off of Splunkbase. For Mac, this app is https://splunkbase.splunk.com/app/2881/
+1. Download the appropriate Python for Scientific Computing app off of Splunkbase. 
 2. From the Splunk Homepage click on the Gear Icon next to Apps
 3. Select “Install App From File”
 4. Click “Choose File” and select the downloaded file. 
