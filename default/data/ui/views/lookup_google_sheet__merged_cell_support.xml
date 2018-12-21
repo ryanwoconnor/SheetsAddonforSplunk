@@ -1,5 +1,5 @@
 <form>
-  <label>Lookup Google Sheet - Merged Cell Support</label>
+  <label>Lookup Google Sheet - Merged Header Cell Support</label>
   <fieldset submitButton="true" autoRun="false">
     <input type="dropdown" token="realm">
       <label>Account</label>

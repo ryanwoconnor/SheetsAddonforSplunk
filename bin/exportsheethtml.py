@@ -105,7 +105,7 @@ def GetFiles(api_key, page_token, results, logger):
 
 
 
-def GetSheet(api_key, id, logger):
+def GetSheet(api_key, id, logger, subsheet):
     try:
         results = []
         r=requests.get('https://www.googleapis.com/drive/v3/files/'+id+'/export?access_token='+api_key+'&mimeType=application/zip')
@@ -115,7 +115,7 @@ def GetSheet(api_key, id, logger):
         input_zip = zipfile.ZipFile(f)
 
         for line in input_zip.namelist():
-            if "html" in line:
+            if "html" in line and subsheet in line:
                 #result = {}
                 fileContent = input_zip.open(line)
                 result["content"] = fileContent.read()
@@ -183,6 +183,7 @@ for result in results:
         #Get Refresh Token
         refreshtoken = tokens["RefreshToken"]
 
+        subsheet = result['subsheet']
         #Get the API Key and Refresh Token
         new_creds = RefreshToken(refreshtoken, username, sessionKey)
 
@@ -191,7 +192,7 @@ for result in results:
         api_key=new_creds["APIKey"]
 
         try:
-            results = GetSheet(api_key, fileId, logger)
+            results = GetSheet(api_key, fileId, logger, subsheet)
         except Exception as e:
             logger.info(str(e))
             results = []
