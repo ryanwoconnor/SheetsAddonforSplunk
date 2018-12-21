@@ -206,6 +206,9 @@ if "cellRange" in options:
 else:
 	cell_range = "A1:ZZ"
 
+if options["cellRange"] == "All":
+	cell_range = "A1:ZZ"
+
 for result in results:
 	try:
 		#Get Google Drive Name and API Creds from Password Store

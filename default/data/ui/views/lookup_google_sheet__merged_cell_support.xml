@@ -1,5 +1,5 @@
 <form>
-  <label>Lookup CSV</label>
+  <label>Lookup Google Sheet - Merged Header Cell Support</label>
   <fieldset submitButton="true" autoRun="false">
     <input type="dropdown" token="realm">
       <label>Account</label>
@@ -16,10 +16,25 @@
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$"| getcsv</query>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$"| getsheet</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
+    </input>
+    <input type="dropdown" token="subsheet">
+      <label>Subsheet Select</label>
+      <fieldForLabel>title</fieldForLabel>
+      <fieldForValue>title</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | eval fileId="$fileId$"| search realm="$realm$"| subsheetlist</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="text" token="headerRow">
+      <label>Header Row</label>
+      <default>0</default>
+      <initialValue>0</initialValue>
     </input>
     <input type="radio" token="export_answer" searchWhenChanged="true">
       <label>Export Sheet?</label>
@@ -57,7 +72,10 @@
     <panel>
       <table>
         <search>
-          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `getcsv("$realm$", "$fileId$")` $outputlookup_filename$</query>
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheet$", "$headerRow$")` $outputlookup_filename$ 
+| eval headerrow=$headerRow$
+| fit HTMLTableDecode content 
+| fields - content</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>
