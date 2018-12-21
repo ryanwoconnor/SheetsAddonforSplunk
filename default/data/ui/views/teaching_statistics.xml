@@ -1,0 +1,60 @@
+<form>
+  <label>Teaching Statistics</label>
+  <search id="baseSearch">
+    <query>
+    | rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")` | fields name id courseState creationTime
+    </query>
+  </search>
+  <fieldset submitButton="true">
+    <input type="dropdown" token="realm">
+      <label>Account</label>
+      <fieldForLabel>realm</fieldForLabel>
+      <fieldForValue>realm</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Total Number of Classes Taught Using Splunk and Google Classroom</title>
+      <single>
+        <search base="baseSearch">
+          <query>| stats count</query>
+        </search>
+        <option name="drilldown">none</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Total Number of Students Taught Using Splunk and Google Classroom</title>
+      <single>
+        <search>
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")` 
+| eval courseId=id 
+| map maxsearches=10000 search="| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `liststudents(\"Ryan UConn\", \"$$courseId$$\")` | eval course_title=\"$$name$$\"" 
+| stats count</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Trend of Number of Classes Taught using Splunk and Google Classroom</title>
+      <chart>
+        <search base="baseSearch">
+          <query>| eval _time = strptime(creationTime, "%Y-%m-%dT%T.%3NZ") | timechart span=1y count</query>
+        </search>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</form>

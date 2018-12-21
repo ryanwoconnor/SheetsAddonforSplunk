@@ -1,0 +1,136 @@
+<form>
+  <label>Lookup Google Sheet - Merged Cell Support</label>
+  <fieldset submitButton="true" autoRun="false">
+    <input type="dropdown" token="realm">
+      <label>Account</label>
+      <fieldForLabel>realm</fieldForLabel>
+      <fieldForValue>realm</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="fileId">
+      <label>File</label>
+      <fieldForLabel>name</fieldForLabel>
+      <fieldForValue>id</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$"| getsheet</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="dropdown" token="subsheetId">
+      <label>Subsheet Select</label>
+      <fieldForLabel>title</fieldForLabel>
+      <fieldForValue>title</fieldForValue>
+      <search>
+        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | eval fileId="$fileId$"| search realm="$realm$"| subsheetlist</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+    <input type="text" token="cellRange">
+      <label>Cell Range</label>
+      <default>A1:ZZ</default>
+      <initialValue>A1:ZZ</initialValue>
+    </input>
+    <input type="text" token="headerRow">
+      <label>Header Row</label>
+      <default>0</default>
+      <initialValue>0</initialValue>
+    </input>
+    <input type="radio" token="export_answer" searchWhenChanged="true">
+      <label>Export Sheet?</label>
+      <fieldForLabel>answer</fieldForLabel>
+      <fieldForValue>answer</fieldForValue>
+      <search>
+        <query>| makeresults | eval answer="yes"  | append [|makeresults | eval answer="no"] | fields - _time</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <change>
+        <condition value="yes">
+          <set token="show_category">true</set>
+        </condition>
+        <condition value="no">
+          <unset token="show_category"></unset>
+          <set token="outputlookup_filename">| noop</set>
+        </condition>
+      </change>
+    </input>
+    <input type="dropdown" depends="$show_category$" token="outputlookup_filename">
+      <label>Destination Lookup Table</label>
+      <fieldForLabel>title</fieldForLabel>
+      <fieldForValue>output_command</fieldForValue>
+      <search>
+        <query>|rest /servicesNS/nobody/GoogleDriveAddonforSplunk/data/lookup-table-files | dedup title | table eai:acl.app eai:appName filename title fields_list updated id | eval export_answer="$export_answer$" | eval output_command=case(export_answer=="yes", "| outputlookup ".title, export_answer=="no","") | dedup output_command</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <choice value="| noop">None</choice>
+      <default>| noop</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheetId$", "$headerRow$", "$cellRange$")` $outputlookup_filename$ 
+| fit HTMLTableDecode content 
+| fields - content</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Number of Sheets inside this Google Sheet</title>
+      <single>
+        <search>
+          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$" | eval fileId="$fileId$" | subsheetlist | stats count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Information</title>
+      <html>
+      <table>
+        <tr>
+          <td>
+           This Dashboard allows you to import data from a Google Sheet into Splunk. You can start by selecting your Google Account, and then choosing one of the sheets that you have available. For more information on creating Google Sheets, you can visit the <a href="https://www.google.com/sheets/about/">following link</a>.<br/>
+              <br/>
+              <strong>Requirements:</strong> Each Google Sheet you create comes with the possibility of a wide range of features. Unfortunately some of those features make formatting very complex and they are not supported within Splunk. The purpose of this Dashboard is to be able to lookup "CSV" like data inside of a Google Sheet. That means that your spreadsheet should look something like the following screenshot and abide by the following guidelines. 
+              <ol>
+  <li>
+                  <strong>Row 1 should be reserved for your "header".</strong> These are also known as "column names" or "feature names". An example of a header is highlighted in green in the screenshot. You do not need to highlight your header in green.</li>
+  <li>
+                  <strong>All data should remain within the bounds of your header.</strong> So if you have 4 column names (like in the screenshot) you should only have data in columns A-D, not in column E. Your data should also start in Row 2, not in Row 1. Sample data is highlighted in yellow in the screenshot.  </li>
+  <li>
+                  <strong>This Dashboard supports performing a lookup of any GRID style sheets in your Google Spreadsheet.</strong>  You are also able to lookup multiple subsheets inside of a Google Sheet. You can select any Spreadsheet and any subsheet using the dropdowns above. </li>
+</ol>
+<br/>
+         If you've followed these guidelines and are still encountering errors, please reach out on Splunk Answers.      
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <center>
+                <img src="/static/app/GoogleDriveAddonforSplunk/sheet_info.jpg"/>
+              </center>
+          </td>
+        </tr>
+      </table>
+ </html>
+    </panel>
+  </row>
+</form>

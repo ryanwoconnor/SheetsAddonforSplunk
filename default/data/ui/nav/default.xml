@@ -2,7 +2,8 @@
   <view name="search" default="true" />
   <collection label="Lookups">
   <view name="lookup_sheet" />
-  <view name="lookup_csv" />
+  <view name="lookup_google_sheet__merged_cell_support" />  
+<view name="lookup_csv" />
       <view name="lookup_courses" />
 </collection>
 <collection label="Google Classroom">
