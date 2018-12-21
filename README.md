@@ -1,5 +1,5 @@
 
-# Google App for Splunk Setup Instructions
+# Google App for Splunk
 
 ## Installation Steps
 
@@ -25,16 +25,12 @@
 5. Click “Upload”
 6. Click on “Restart Now”
 
-
 ## Configure Apps
 
 ## Setup Google App for Splunk
 1. Open Google App for Splunk from the Apps Dropdown
 2. Click “Continue to App Setup Page”
 3. Follow Instructions to Get an API Key
-
-![Alt text](/images/auth1.jpg?raw=true "Auth Option 1")
-
 4. Restart Splunk
 
 ### Setup Python for Scientific Computing with custom python libraries
@@ -54,7 +50,21 @@ pip install html5lib pandas bs4 numpy --target=.
 
 ### Install Custom Splunk ML Algorithms
 
-<THIS NEEDS TO BE FILLED OUT WHEN RYAN GETS ACCESS TO SPLUNK GIT>>
+```<THIS NEEDS TO BE FILLED OUT WHEN RYAN GETS ACCESS TO SPLUNK GIT>>```
+  
+## Security
+
+Security is the largest area of concern with this app. In order to help with security we have done a couple of things. 
+
+1. This Splunk App will only request Read-Only Access to your Google Drive. The app cannot modify or delete anything in your Google Account.  
+2. Splunk does not view any of your data, the only people that will be able to access your Google Drive data is anyone who has admin access to your Splunk instance once this app is setup. 
+3. We specifically do not recommend setting this app up on a shared instance if you have any concerns about other admins seeing the content in the Google Account you authenticate with. 
+
+Our current recommended setup would look like the following, where you would only authenticate this app to an account where you specifically share out the files you want to use in Splunk. This way the app does not have access to your entire Google Drive. 
+![Alt text](/images/auth1.jpg?raw=true "Auth Option 1")
+
+#### Revoking Access
+If you need to revoke access to the Splunk App for any reason, you can do so by visiting the following Website. https://myaccount.google.com/permissions
 
 
 
