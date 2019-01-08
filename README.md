@@ -68,7 +68,7 @@ cd $SPLUNK_HOME/etc/apps/GoogleDriveAddonforSplunk/bin/
 2. Install the following Python packages:
 
 ```
-pip install pandas bs4 numpy --target=.
+pip install pandas bs4 --target=.
 
 ```
 
