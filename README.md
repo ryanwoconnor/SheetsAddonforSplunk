@@ -60,7 +60,7 @@ This App is tested against
 ### Setup Google App with custom python libraries
 **_Please keep in mind that this step will not survive future upgrades of this app. If you do update the Google App, you will need to repeat this step_**
 
-1. Navigate to Python for Scientific Computing Python Home directory. For Mac this looks like:
+1. Navigate to Google Apps bin directory:
 ```
 cd $SPLUNK_HOME/etc/apps/GoogleDriveAddonforSplunk/bin/
 ```
