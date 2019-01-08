@@ -22,6 +22,9 @@ import json
 import splunklib.client as client
 from StringIO import StringIO
 import zipfile
+import pandas as pd
+from bs4 import BeautifulSoup
+import copy
 
 def setup_logger(level):
     logger = logging.getLogger('my_search_command')
@@ -105,7 +108,7 @@ def GetFiles(api_key, page_token, results, logger):
 
 
 
-def GetSheet(api_key, id, logger, subsheet):
+def GetSheet(api_key, id, logger, subsheet, headerrow):
     try:
         results = []
         r=requests.get('https://www.googleapis.com/drive/v3/files/'+id+'/export?access_token='+api_key+'&mimeType=application/zip')
@@ -118,41 +121,140 @@ def GetSheet(api_key, id, logger, subsheet):
             if "html" in line and subsheet in line:
                 #result = {}
                 fileContent = input_zip.open(line)
-                result["content"] = fileContent.read()
-                results.append(result)
-        return results
+                data = fileContent.read()
 
 
-        # reader = csv.reader(r.text.splitlines())
-        #
-        # i_row=0
-        # keys=[]
-        # for row in reader:
-        # 	if i_row==0:
-        # 		i_header=0
-        # 		for header in row:
-        # 			key = {}
-        # 			key[i_header]=header
-        # 			keys.append(key)
-        # 			i_header = i_header + 1
-        # 		i_row=i_row+1
-        # 		break
-        # i_row=0
-        #
-        # result = {}
-        # for row in reader:
-        # 	#if i_row==0:
-        # 	#	i_row=i_row+1
-        # 	#	continue
-        # 	i_row_value = 0
-        # 	result = {}
-        # 	for item in row:
-        # 		result[keys[i_row_value][i_row_value]]=item
-        # 		i_row_value = i_row_value + 1
-        # 	results.append(result)
-        # 	i_row=i_row+1
-        # return results
-        #
+
+                url_soup = BeautifulSoup(data)
+                tables = []
+                tables_html = url_soup.find_all("table")
+
+                # Parse each table
+                for n in range(0, len(tables_html)):
+
+                    n_cols = 0
+                    n_rows = 0
+
+                    for row in tables_html[n].find_all("tr"):
+                        col_tags = row.find_all(["td", "th"])
+                        if len(col_tags) > 0:
+                            n_rows += 1
+                            if len(col_tags) > n_cols:
+                                n_cols = len(col_tags)
+
+                    # Create dataframe
+                    df_frame = pd.DataFrame(index=range(0, n_rows), columns=range(0, n_cols))
+
+                    # Create list to store rowspan values
+                    skip_index = [0 for i in range(0, n_cols)]
+
+                    # Start by iterating over each row in this table...
+                    row_counter = 0
+                    for row in tables_html[n].find_all("tr"):
+
+                        # Skip row if it's blank
+                        if len(row.find_all(["td", "th"])) == 0:
+                            next
+
+                        else:
+
+                            # Get all cells containing data in this row
+                            columns = row.find_all(["td", "th"])
+                            col_dim = []
+                            row_dim = []
+                            col_dim_counter = -1
+                            row_dim_counter = -1
+                            col_counter = -1
+                            this_skip_index = copy.deepcopy(skip_index)
+
+                            for col in columns:
+
+                                # Determine cell dimensions
+                                colspan = col.get("colspan")
+                                if colspan is None:
+                                    col_dim.append(1)
+                                else:
+                                    col_dim.append(int(colspan))
+                                col_dim_counter += 1
+
+                                rowspan = col.get("rowspan")
+                                if rowspan is None:
+                                    row_dim.append(1)
+                                else:
+                                    row_dim.append(int(rowspan))
+                                row_dim_counter += 1
+
+                                # Adjust column counter
+                                if col_counter == -1:
+                                    col_counter = 0
+                                else:
+                                    col_counter = col_counter + col_dim[col_dim_counter - 1]
+
+                                while skip_index[col_counter] > 0:
+                                    col_counter += 1
+
+                                # Get cell contents
+                                cell_data = col.get_text()
+
+                                # Insert data into cell
+                                df_frame.iat[row_counter, col_counter] = cell_data
+                                # Record column skipping index
+                                if row_dim[row_dim_counter] > 1:
+                                    this_skip_index[col_counter] = row_dim[row_dim_counter]
+
+                        # Adjust row counter
+                        row_counter += 1
+
+                        # Adjust column skipping index
+                        skip_index = [i - 1 if i > 0 else i for i in this_skip_index]
+
+                    # Append dataframe to list of tables
+                    tables.append(df_frame)
+
+                i = 0
+                row_incr = 0
+                # Setup the dataframe to be returned as the processed table
+                new_df = tables[0]
+
+                # Replace any empty values with the word "null"
+                new_df = new_df.fillna("null")
+
+                # Iterate through every row looking for null values
+                for index, row in new_df.iterrows():
+                    row_incr += 1
+
+                    # Set the header incrementer
+                    i_incr = 0
+                    # Iterate through every column in the row
+                    while i < len(row):
+                        # If the value is null, let's act on it
+                        if row[i] == "null":
+                            # Increment the header incrementer
+                            i_incr += 1
+                            # Set the value of the null header to the previous value plus the incrementer
+                            row[i] = row[i - 1] + str(i_incr)
+                        # Restart header incrementer
+                        i_incr = 0
+                        # Increment the column counter
+                        i = i + 1
+                    # Restart the column counter before next row
+                    i = 0
+                    if row_incr > 1:
+                        break
+                new_df.reindex(new_df)
+
+                new_df = new_df.drop(columns=[0]).drop([0])
+                new_df.columns = new_df.iloc[headerrow]
+                new_df.reindex(new_df)
+                new_df = new_df.iloc[headerrow + 1:]
+
+                #result["content"] = str(new_df)
+                #results.append(result)
+                results = new_df.to_dict('records')
+
+            return results
+
+
     except Exception as e:
         results = []
         result["ERROR"] = str(e)
@@ -168,7 +270,7 @@ logger = setup_logger(logging.INFO)
 
 results,dummy,settings = splunk.Intersplunk.getOrganizedResults()
 sessionKey = settings.get("sessionKey")
-
+keywords, argvals = splunk.Intersplunk.getKeywordsAndOptions()
 
 for result in results:
     try:
@@ -176,6 +278,7 @@ for result in results:
         username=result['username']
         password=result['clear_password']
 
+        headerrow = int(argvals.get("headerRow",0))
         fileId = result['fileId']
         #Parse JSON API Creds
         tokens = json.loads(password)
@@ -192,7 +295,7 @@ for result in results:
         api_key=new_creds["APIKey"]
 
         try:
-            results = GetSheet(api_key, fileId, logger, subsheet)
+            results = GetSheet(api_key, fileId, logger, subsheet, headerrow)
         except Exception as e:
             logger.info(str(e))
             results = []
