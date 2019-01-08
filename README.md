@@ -8,7 +8,7 @@
     + [Install Python for Scientific Computing](#install-python-for-scientific-computing)
   * [Configure Apps](#configure-apps)
     + [Setup Google App for Splunk](#setup-google-app-for-splunk)
-    + [Setup Python for Scientific Computing with custom python libraries](#setup-python-for-scientific-computing-with-custom-python-libraries)
+    + [Setup Google App with custom python libraries](#setup-python-for-scientific-computing-with-custom-python-libraries)
   * [Recommended Google Data Format](#recommended-google-data-format)
     + [Google Sheet Feature Support](#google-sheet-feature-support)
   * [Security](#security)
@@ -57,18 +57,18 @@ This App is tested against
 3. Follow Instructions to Get an API Key
 4. Restart Splunk
 
-### Setup Python for Scientific Computing with custom python libraries
-**_Please keep in mind that this step will not survive future upgrades of this app. If you do update the Python for Scientific Computing app, you will need to repeat this step_**
+### Setup Google App with custom python libraries
+**_Please keep in mind that this step will not survive future upgrades of this app. If you do update the Google App, you will need to repeat this step_**
 
 1. Navigate to Python for Scientific Computing Python Home directory. For Mac this looks like:
 ```
-cd $SPLUNK_HOME/etc/apps/Splunk_SA_Scientific_Python_darwin_x86_64/bin/darwin_x86_64/lib/python2.7
+cd $SPLUNK_HOME/etc/apps/GoogleDriveAddonforSplunk/bin/
 ```
 
 2. Install the following Python packages:
 
 ```
-pip install html5lib pandas bs4 numpy --target=.
+pip install pandas bs4 numpy --target=.
 
 ```
 
