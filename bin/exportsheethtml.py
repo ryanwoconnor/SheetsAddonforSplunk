@@ -1,10 +1,13 @@
-import splunk.Intersplunk
-from multiprocessing import Process
-from signal import signal, SIGTERM
-from time import sleep
-import atexit
-import requests
+#!/usr/bin/env python
+
 import os
+import platform
+import stat
+import sys
+import subprocess
+import time
+import traceback
+import splunk.Intersplunk
 import urllib
 import urllib2
 import time
@@ -19,12 +22,56 @@ import logging
 import logging.handlers
 import sys
 import json
+from shutil import copyfile
 import splunklib.client as client
+from multiprocessing import Process
+from signal import signal, SIGTERM
+from time import sleep
+import atexit
+import requests
+import os
+import copy
+from bs4 import BeautifulSoup
 from StringIO import StringIO
 import zipfile
+
+
+# This code ensures that memory-mapped file support is added to core Splunk Python prior to pandas being imported. 
+supported_systems = {
+    ('Linux', 'i386'): 'linux_x86',
+    ('Linux', 'x86_64'): 'linux_x86_64',
+    ('Darwin', 'x86_64'): 'darwin_x86_64',
+    ('Windows', 'AMD64'): 'windows_x86_64',
+}
+
+system = (platform.system(), platform.machine())
+if system not in supported_systems:
+    raise Exception('Unsupported platform: %s %s' % (system))
+
+sa_scipy = 'Splunk_SA_Scientific_Python_%s' % (supported_systems[system])
+
+mmap_path = os.path.join(os.environ['SPLUNK_HOME'], 'etc', 'apps', sa_scipy, 'bin', supported_systems[system], 'lib', 'python2.7','lib-dynload')
+mmap = "mmap.so"
+splunk_python_package_loc = os.path.join(os.environ['SPLUNK_HOME'], 'lib', 'python2.7')
+# sa_path = os.path.join(bundle_paths.get_base_path(), sa_scipy)
+try:
+    if not os.path.isdir(mmap_path):
+        raise Exception('Failed to find location of mmap.so' % mmap_path)
+    if not os.path.isdir(splunk_python_package_loc):
+        raise Exception('Failed to find Splunk Python Package Location' % splunk_python_package_loc)
+    else:
+        copyfile(mmap_path+'/'+mmap, splunk_python_package_loc+'/'+mmap)
+
+except Exception as e:
+    results = []
+    result = {}
+    result["Error"] = str(e)
+    results.append(result)
+    splunk.Intersplunk.outputResults(results)
+    sys.exit()
+
+
 import pandas as pd
-from bs4 import BeautifulSoup
-import copy
 
 def setup_logger(level):
     logger = logging.getLogger('my_search_command')
