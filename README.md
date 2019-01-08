@@ -6,24 +6,19 @@
   * [Installing Required Apps](#installing-required-apps)
     + [Install Google App for Splunk](#install-google-app-for-splunk)
     + [Install Python for Scientific Computing](#install-python-for-scientific-computing)
-    + [Install Splunk Machine Learning Toolkit](#install-splunk-machine-learning-toolkit)
   * [Configure Apps](#configure-apps)
     + [Setup Google App for Splunk](#setup-google-app-for-splunk)
     + [Setup Python for Scientific Computing with custom python libraries](#setup-python-for-scientific-computing-with-custom-python-libraries)
-    + [Install Custom Splunk ML Algorithms](#install-custom-splunk-ml-algorithms)
   * [Recommended Google Data Format](#recommended-google-data-format)
     + [Google Sheet Feature Support](#google-sheet-feature-support)
   * [Security](#security)
       - [Revoking Access](#revoking-access)
 
 
-
-
 ## Requirements
 
 For full-functionality of this app, you will want to install side-by-side with the following Splunk Apps:
 
-* Splunk Machine Learning Toolkit 4.1 and Above
 * Splunk App: Python for Scientific Computing.
 
 _Note: Make sure you install the correct version of Python for Scientific Computing for your OS_
@@ -35,7 +30,6 @@ _Note: Make sure you install the correct version of Python for Scientific Comput
 This App is tested against
 
 * Splunk 7.1 and Above
-* Splunk Machine Learning Toolkit 4.1
 * Mac OSX
 * Ubuntu Linux
 
@@ -52,14 +46,6 @@ This App is tested against
 2. From the Splunk Homepage click on the Gear Icon next to Apps
 3. Select “Install App From File”
 4. Click “Choose File” and select the downloaded file. 
-5. Click “Upload”
-6. Click on “Restart Now”
-
-### Install Splunk Machine Learning Toolkit
-1. Download the Splunk Machine Learning Toolkit from Splunkbase https://splunkbase.splunk.com/app/2890/
-2. From the Splunk Homepage click on the Gear Icon next to Apps
-3. Select “Install App From File”
-4. Click “Choose File” and select the downloaded file.
 5. Click “Upload”
 6. Click on “Restart Now”
 
@@ -84,19 +70,6 @@ cd $SPLUNK_HOME/etc/apps/Splunk_SA_Scientific_Python_darwin_x86_64/bin/darwin_x8
 ```
 pip install html5lib pandas bs4 numpy --target=.
 
-```
-
-### Install Custom Splunk ML Algorithms
-1. Clone the mltk-algo-contrib repo and cd into the directory:
-```
-git clone https://github.com/splunk/mltk-algo-contrib.git
-cd mltk-algo-contrib
-```
-
-2. Symlink the src directory to the apps folder in Splunk and restart splunkd:
-```
-ln -s "$(pwd)/src" $SPLUNK_HOME/etc/apps/SA_mltk_contrib_app
-$SPLUNK_HOME/bin/splunk restart
 ```
 
 ## Recommended Google Data Format
