@@ -4,12 +4,12 @@
   <view name="lookup_sheet" />
   <view name="lookup_google_sheet__merged_cell_support" />  
 <view name="lookup_csv" />
-      <view name="lookup_courses" />
+      <!--<view name="lookup_courses" />-->
 </collection>
-<collection label="Google Classroom">
+<!--<collection label="Google Classroom">
    <view name="lookup_courses" />
   <view name="grading_dashboard" />
-</collection>
+</collection>-->
   <view name="list_file_changes" />
 <collection label="Configuration">
   <view name="setup_view_dashboard" />
