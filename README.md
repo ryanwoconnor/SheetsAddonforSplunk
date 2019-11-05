@@ -1,16 +1,16 @@
 
 # Sheets App for Splunk
 
-- [Sheets App for Splunk](#google-app-for-splunk)
+- [Sheets App for Splunk](#sheets-app-for-splunk)
   * [Requirements](#requirements)
   * [Installing Required Apps](#installing-required-apps)
-    + [Install Sheets App for Splunk](#install-google-app-for-splunk)
+    + [Install Sheets App for Splunk](#install-sheets-app-for-splunk)
     + [Install Python for Scientific Computing](#install-python-for-scientific-computing)
   * [Configure Apps](#configure-apps)
-    + [Setup Sheets App for Splunk](#setup-google-app-for-splunk)
+    + [Setup Sheets App for Splunk](#setup-sheets-app-for-splunk)
     + [Setup Sheets App with custom python libraries](#setup-python-for-scientific-computing-with-custom-python-libraries)
-  * [Recommended Sheets Data Format](#recommended-google-data-format)
-    + [Sheets Feature Support](#google-sheet-feature-support)
+  * [Recommended Sheets Data Format](#recommended-sheets-data-format)
+    + [Sheets Feature Support](#sheets-feature-support)
   * [Security](#security)
       - [Revoking Access](#revoking-access)
 
