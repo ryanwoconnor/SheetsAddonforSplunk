@@ -1,16 +1,16 @@
 
 # Sheets App for Splunk
 
-- [Google App for Splunk](#google-app-for-splunk)
+- [Sheets App for Splunk](#google-app-for-splunk)
   * [Requirements](#requirements)
   * [Installing Required Apps](#installing-required-apps)
-    + [Install Google App for Splunk](#install-google-app-for-splunk)
+    + [Install Sheets App for Splunk](#install-google-app-for-splunk)
     + [Install Python for Scientific Computing](#install-python-for-scientific-computing)
   * [Configure Apps](#configure-apps)
-    + [Setup Google App for Splunk](#setup-google-app-for-splunk)
-    + [Setup Google App with custom python libraries](#setup-python-for-scientific-computing-with-custom-python-libraries)
-  * [Recommended Google Data Format](#recommended-google-data-format)
-    + [Google Sheet Feature Support](#google-sheet-feature-support)
+    + [Setup Sheets App for Splunk](#setup-google-app-for-splunk)
+    + [Setup Sheets App with custom python libraries](#setup-python-for-scientific-computing-with-custom-python-libraries)
+  * [Recommended Sheets Data Format](#recommended-google-data-format)
+    + [Sheets Feature Support](#google-sheet-feature-support)
   * [Security](#security)
       - [Revoking Access](#revoking-access)
 
@@ -35,9 +35,9 @@ This App is tested against
 
 ## Installing Required Apps
 
-### Install Google App for Splunk
+### Install Sheets App for Splunk
 1. Install Splunk
-2. Clone GoogleDriveAddonforSplunk into /opt/splunk/etc/apps
+2. Clone SheetsAddonforSplunk into /opt/splunk/etc/apps
 3. Start Splunk
 4. Login to Splunk
 
@@ -51,18 +51,18 @@ This App is tested against
 
 ## Configure Apps
 
-### Setup Google App for Splunk
-1. Open Google App for Splunk from the Apps Dropdown
+### Setup Sheets App for Splunk
+1. Open Sheets App for Splunk from the Apps Dropdown
 2. Click “Continue to App Setup Page”
 3. Follow Instructions to Get an API Key
 4. Restart Splunk
 
-### Setup Google App with custom python libraries
+### Setup Sheets App with custom python libraries
 **_Please keep in mind that this step will not survive future upgrades of this app. If you do update the Google App, you will need to repeat this step_**
 
-1. Navigate to Google Apps bin directory:
+1. Navigate to Sheets Apps bin directory:
 ```
-cd $SPLUNK_HOME/etc/apps/GoogleDriveAddonforSplunk/bin/
+cd $SPLUNK_HOME/etc/apps/SheetsAddonforSplunk/bin/
 ```
 
 2. Install the following Python packages:
@@ -72,11 +72,11 @@ pip install pandas bs4 --target=.
 
 ```
 
-## Recommended Google Data Format
+## Recommended Sheets Data Format
 
 This app allows you to import data from a Google Sheet into Splunk or a CSV file stored in Google Drive. You can start by selecting your Google Account, and then choosing one of the sheets that you have available. For more information on creating Google Sheets, you can visit https://www.google.com/sheets/about/
 
-### Google Sheet Feature Support
+### Sheets Feature Support
 Each Google Sheet you create comes with the possibility of a wide range of features. Unfortunately some of those features make formatting very complex and they are not currently supported within Splunk. The purpose of this app is mostly to be able to lookup "CSV-like" data from a Google Sheet. That means that your spreadsheet should look something like the following screenshot and hopefully abide by the following guidelines.
 
 1. Row 1 should be reserved for your "header". These are also known as "column names" or "feature names". An example of a header is highlighted in green in the screenshot. You do not need to highlight your header in your document. 
