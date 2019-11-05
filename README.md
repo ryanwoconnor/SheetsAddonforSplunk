@@ -1,5 +1,5 @@
 
-# Google App for Splunk
+# Sheets App for Splunk
 
 - [Google App for Splunk](#google-app-for-splunk)
   * [Requirements](#requirements)
