@@ -155,7 +155,7 @@ def GetFiles(api_key, page_token, results, logger):
 
 
 
-def GetSheet(api_key, id, logger, subsheet, headerrow):
+def GetSheet(api_key, id, fieldsKeep, fieldsDiscard, logger, subsheet, headerrow):
     try:
         results = []
         r=requests.get('https://www.googleapis.com/drive/v3/files/'+id+'/export?access_token='+api_key+'&mimeType=application/zip')
@@ -294,7 +294,22 @@ def GetSheet(api_key, id, logger, subsheet, headerrow):
                 new_df.columns = new_df.iloc[headerrow]
                 new_df.reindex(new_df)
                 new_df = new_df.iloc[headerrow + 1:]
+                fieldsDiscard = fieldsDiscard.split(",")
+                fieldsKeep = fieldsKeep.split(",") 
+                if fieldsDiscard[0] != "":
+                    for field in fieldsDiscard:
+                        logger.info("Discarding Fields:"+field)
+                        logger.info(str(new_df))
+                        new_df.drop(field, axis=1,  inplace=True)
+                    new_df.reindex(new_df)
+                
+                if fieldsKeep[0] != "":
+                    logger.info("Keeping Fields:"+str(fieldsKeep))
+                    logger.info(str(new_df))
+                    new_df = new_df.filter(fieldsKeep)
+                    new_df.reindex(new_df)
 
+                logger.info(str(new_df))
                 #result["content"] = str(new_df)
                 #results.append(result)
                 results = new_df.to_dict('records')
@@ -326,6 +341,10 @@ for result in results:
         password=result['clear_password']
 
         headerrow = int(argvals.get("headerRow",0))
+	fieldsDiscard = argvals.get("fieldsDiscard","")
+        fieldsKeep = argvals["fieldsKeep"]
+        logger.info(fieldsKeep)
+        fieldsKeep = fieldsKeep.replace("%20"," ")
         fileId = result['fileId']
         #Parse JSON API Creds
         tokens = json.loads(password)
@@ -342,7 +361,7 @@ for result in results:
         api_key=new_creds["APIKey"]
 
         try:
-            results = GetSheet(api_key, fileId, logger, subsheet, headerrow)
+            results = GetSheet(api_key, fileId, fieldsKeep, fieldsDiscard, logger, subsheet, headerrow)
         except Exception as e:
             logger.info(str(e))
             results = []
