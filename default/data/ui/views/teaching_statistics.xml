@@ -2,7 +2,7 @@
   <label>Teaching Statistics</label>
   <search id="baseSearch">
     <query>
-    | rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")` | fields name id courseState creationTime
+    | rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcourse("$realm$")` | fields name id courseState creationTime
     </query>
   </search>
   <fieldset submitButton="true">
@@ -11,7 +11,7 @@
       <fieldForLabel>realm</fieldForLabel>
       <fieldForValue>realm</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords | table realm clear_password</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -31,9 +31,9 @@
       <title>Total Number of Students Taught Using Splunk and Google Classroom</title>
       <single>
         <search>
-          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")` 
+          <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcourse("$realm$")` 
 | eval courseId=id 
-| map maxsearches=10000 search="| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `liststudents(\"Ryan UConn\", \"$$courseId$$\")` | eval course_title=\"$$name$$\"" 
+| map maxsearches=10000 search="| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `liststudents(\"Ryan UConn\", \"$$courseId$$\")` | eval course_title=\"$$name$$\"" 
 | stats count</query>
           <earliest>$earliest$</earliest>
           <latest>$latest$</latest>

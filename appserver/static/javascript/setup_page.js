@@ -1,6 +1,6 @@
 "use strict";
 
-var app_name = "GoogleDriveAddonforSplunk";
+var app_name = "SheetsAddonforSplunk";
 
 // This is an undocumented Splunk solution for how to include javascript logic
 // from other files.

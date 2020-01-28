@@ -6,7 +6,7 @@
       <fieldForLabel>realm</fieldForLabel>
       <fieldForValue>realm</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords | table realm clear_password</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -16,7 +16,7 @@
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | search realm="$realm$"| getsheet</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords | search realm="$realm$"| getsheet</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -26,7 +26,7 @@
       <fieldForLabel>title</fieldForLabel>
       <fieldForValue>title</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | eval fileId="$fileId$"| search realm="$realm$"| subsheetlist</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords | eval fileId="$fileId$"| search realm="$realm$"| subsheetlist</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -60,7 +60,7 @@
       <fieldForLabel>title</fieldForLabel>
       <fieldForValue>output_command</fieldForValue>
       <search>
-        <query>|rest /servicesNS/nobody/GoogleDriveAddonforSplunk/data/lookup-table-files | dedup title | table eai:acl.app eai:appName filename title fields_list updated id | eval export_answer="$export_answer$" | eval output_command=case(export_answer=="yes", "| outputlookup ".title, export_answer=="no","") | dedup output_command</query>
+        <query>|rest /servicesNS/nobody/SheetsAddonforSplunk/data/lookup-table-files | dedup title | table eai:acl.app eai:appName filename title fields_list updated id | eval export_answer="$export_answer$" | eval output_command=case(export_answer=="yes", "| outputlookup ".title, export_answer=="no","") | dedup output_command</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -72,7 +72,7 @@
     <panel>
       <table>
         <search>
-          <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheet$", "$headerRow$")` $outputlookup_filename$</query>
+          <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `gethtmlsheet("$realm$", "$fileId$", "$subsheet$", "$headerRow$")` $outputlookup_filename$</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>

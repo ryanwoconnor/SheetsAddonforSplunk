@@ -2,7 +2,7 @@
   <label>Analyze Class Assignments</label>
   <search id="baseSearch">
     <query>
-      | rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourseworksubmission("$realm$", "$courseId$", "$courseWorkId$")` | join userId [| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `liststudents("$realm$", "$courseId$")`] | eval "Grade Percent"=(pointsEarned/maxPoints)*100 | fillnull value=0 "Grade Percent"
+      | rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcourseworksubmission("$realm$", "$courseId$", "$courseWorkId$")` | join userId [| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `liststudents("$realm$", "$courseId$")`] | eval "Grade Percent"=(pointsEarned/maxPoints)*100 | fillnull value=0 "Grade Percent"
     </query>
   </search>
   <fieldset submitButton="true" autoRun="false">
@@ -11,7 +11,7 @@
       <fieldForLabel>realm</fieldForLabel>
       <fieldForValue>realm</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords | table realm clear_password</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -21,7 +21,7 @@
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")`</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcourse("$realm$")`</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -31,7 +31,7 @@
       <fieldForLabel>title</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcoursework("$realm$", "$courseId$")`</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcoursework("$realm$", "$courseId$")`</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>

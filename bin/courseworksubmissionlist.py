@@ -50,23 +50,23 @@ def RefreshToken(refresh_token, user, sessionKey):
         logger.info(str(e))
 
 def ListTokens(sessionKey):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
+    splunkService = client.connect(token=sessionKey,app='SheetsAddonforSplunk')
     for storage_password in splunkService.storage_passwords:
         logger.info(storage_password.name)
 
 def CreateToken(sessionKey, password, user, realm):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
+    splunkService = client.connect(token=sessionKey,app='SheetsAddonforSplunk')
     splunkService.storage_passwords.create(password, user, realm)
 
 def DeleteToken(sessionKey, user):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')
+    splunkService = client.connect(token=sessionKey,app='SheetsAddonforSplunk')
     try:
         splunkService.storage_passwords.delete(user,user)
     except Exception as e:
         logger.info(str(e))
 
 def GetTokens(sesssionKey):
-    splunkService = client.connect(token=sessionKey,app='GoogleDriveAddonforSplunk')   
+    splunkService = client.connect(token=sessionKey,app='SheetsAddonforSplunk')   
     return splunkService.storage_passwords
 
 def GetCourses(api_key, courseId, courseWorkId, page_token, results, logger):

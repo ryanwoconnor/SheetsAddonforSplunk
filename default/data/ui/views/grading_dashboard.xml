@@ -2,12 +2,12 @@
   <label>Grading Dashboard</label>
   <search id="baseSearch">
     <query>
-      | rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")` 
+      | rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcourse("$realm$")` 
 | search courseState=ACTIVE AND id=$courseId$
 | eval courseId=id
-| map maxsearches=10000 search="| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcoursework(\"$realm$\", \"$$courseId$$\")` | eval name=\"$$name$$\" | eval courseId=\"$$courseId$$\" | eval assignmentTitle=title"
+| map maxsearches=10000 search="| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcoursework(\"$realm$\", \"$$courseId$$\")` | eval name=\"$$name$$\" | eval courseId=\"$$courseId$$\" | eval assignmentTitle=title"
 | eval courseWorkId=id 
-| map  maxsearches=10000 search="| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourseworksubmission(\"$realm$\", \"$$courseId$$\", \"$$courseWorkId$$\")` | eval name=\"$$name$$\" | eval assignmentTitle=\"$$assignmentTitle$$\" | eval courseId=\"$$courseId$$\" | eval courseWorkId=\"$$courseWorkId$$\" | join max=0 userId [| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `liststudents(\"$realm$\", \"$$courseId$$\")`]" | eval "Grade Percent"=(pointsEarned/maxPoints)*100 | fillnull value=0 "Grade Percent"
+| map  maxsearches=10000 search="| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcourseworksubmission(\"$realm$\", \"$$courseId$$\", \"$$courseWorkId$$\")` | eval name=\"$$name$$\" | eval assignmentTitle=\"$$assignmentTitle$$\" | eval courseId=\"$$courseId$$\" | eval courseWorkId=\"$$courseWorkId$$\" | join max=0 userId [| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `liststudents(\"$realm$\", \"$$courseId$$\")`]" | eval "Grade Percent"=(pointsEarned/maxPoints)*100 | fillnull value=0 "Grade Percent"
     </query>
   </search>
   <fieldset submitButton="true" autoRun="false">
@@ -16,7 +16,7 @@
       <fieldForLabel>realm</fieldForLabel>
       <fieldForValue>realm</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords | table realm clear_password</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords | table realm clear_password</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
@@ -26,7 +26,7 @@
       <fieldForLabel>name</fieldForLabel>
       <fieldForValue>id</fieldForValue>
       <search>
-        <query>| rest /servicesNS/nobody/GoogleDriveAddonforSplunk/storage/passwords `listcourse("$realm$")`</query>
+        <query>| rest /servicesNS/nobody/SheetsAddonforSplunk/storage/passwords `listcourse("$realm$")`</query>
         <earliest>-24h@h</earliest>
         <latest>now</latest>
       </search>
