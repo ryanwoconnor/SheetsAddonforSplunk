@@ -36,7 +36,7 @@ from StringIO import StringIO
 import zipfile
 
 
-# This code ensures that memory-mapped file support is added to core Splunk Python prior to pandas being imported. 
+# This code ensures that memory-mapped file support is added to core Splunk Python prior to pandas being imported.
 supported_systems = {
     ('Linux', 'i386'): 'linux_x86',
     ('Linux', 'x86_64'): 'linux_x86_64',
@@ -155,7 +155,7 @@ def GetFiles(api_key, page_token, results, logger):
 
 
 
-def GetSheet(api_key, id, fieldsKeep, fieldsDiscard, logger, subsheet, headerrow):
+def GetSheet(api_key, id, fieldsKeep, fieldsDiscard, logger, subsheet_passed, headerrow):
     try:
         results = []
         r=requests.get('https://www.googleapis.com/drive/v3/files/'+id+'/export?access_token='+api_key+'&mimeType=application/zip')
@@ -163,9 +163,10 @@ def GetSheet(api_key, id, fieldsKeep, fieldsDiscard, logger, subsheet, headerrow
         f = StringIO()
         f.write(r.content)
         input_zip = zipfile.ZipFile(f)
-
+        logger.info(str(input_zip.namelist()))
         for line in input_zip.namelist():
-            if "html" in line and subsheet in line:
+            logger.info(line)
+            if "html" in line and subsheet_passed in line:
                 #result = {}
                 fileContent = input_zip.open(line)
                 data = fileContent.read()
@@ -295,14 +296,14 @@ def GetSheet(api_key, id, fieldsKeep, fieldsDiscard, logger, subsheet, headerrow
                 new_df.reindex(new_df)
                 new_df = new_df.iloc[headerrow + 1:]
                 fieldsDiscard = fieldsDiscard.split(",")
-                fieldsKeep = fieldsKeep.split(",") 
+                fieldsKeep = fieldsKeep.split(",")
                 if fieldsDiscard[0] != "":
                     for field in fieldsDiscard:
                         logger.info("Discarding Fields:"+field)
                         logger.info(str(new_df))
                         new_df.drop(field, axis=1,  inplace=True)
                     new_df.reindex(new_df)
-                
+
                 if fieldsKeep[0] != "":
                     logger.info("Keeping Fields:"+str(fieldsKeep))
                     logger.info(str(new_df))
@@ -312,9 +313,11 @@ def GetSheet(api_key, id, fieldsKeep, fieldsDiscard, logger, subsheet, headerrow
                 logger.info(str(new_df))
                 #result["content"] = str(new_df)
                 #results.append(result)
-                results = new_df.to_dict('records')
+                #results = new_df.to_dict('records')
 
-            return results
+            else:
+                continue
+            return new_df
 
 
     except Exception as e:
@@ -342,7 +345,9 @@ for result in results:
 
         headerrow = int(argvals.get("headerRow",0))
 	fieldsDiscard = argvals.get("fieldsDiscard","")
-        fieldsKeep = argvals["fieldsKeep"]
+        fieldsKeep = argvals.get("fieldsKeep","")
+	fieldsAppend = argvals.get("appendSheets","false")
+        subsheetList = argvals.get("subsheetList","")
         logger.info(fieldsKeep)
         fieldsKeep = fieldsKeep.replace("%20"," ")
         fileId = result['fileId']
@@ -361,12 +366,28 @@ for result in results:
         api_key=new_creds["APIKey"]
 
         try:
-            results = GetSheet(api_key, fileId, fieldsKeep, fieldsDiscard, logger, subsheet, headerrow)
+            new_frame = pd.DataFrame(index=range(0, 0), columns=range(0, 0))
+            if fieldsAppend == "true":
+                subsheetListArray = subsheetList.split(",")
+            else:
+                subsheetListArray = [subsheet]
+            i = 1
+            for insubsheet in subsheetListArray:
+                insubsheet = str(insubsheet)
+                if i == 1:
+                    logger.info("First Sheet Being Worked On")
+                    new_frame = GetSheet(api_key, fileId, fieldsKeep, fieldsDiscard, logger, insubsheet, headerrow)
+                else:
+                    logger.info("Next Sheet Being Worked On")
+                    results2 = GetSheet(api_key, fileId, fieldsKeep, fieldsDiscard, logger, insubsheet, headerrow)
+                    new_frame = new_frame.append(results2, ignore_index=True)
+                i = i + 1
         except Exception as e:
             logger.info(str(e))
             results = []
             result["Error"]=str(e)
             results.append(result)
+        results = new_frame.to_dict('records')
         splunk.Intersplunk.outputResults(results)
 
 
