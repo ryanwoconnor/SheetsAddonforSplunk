@@ -317,6 +317,8 @@ def GetSheet(api_key, id, fieldsKeep, fieldsDiscard, logger, subsheet_passed, he
 
             else:
                 continue
+
+            new_df["subsheet"] = subsheet_passed
             return new_df
 
 
